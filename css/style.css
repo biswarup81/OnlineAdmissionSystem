@@ -1,0 +1,32 @@
+@import url(http://ghz.appspot.com/css/acc.css);
+@charset "windows-1251";
+a{text-decoration:none;}
+a:hover{text-decoration:none;}
+body{margin: 0px; padding: 0px; background: #ffffff}
+div,td{font-family: Tahoma; font-size: 11px; color: #28333A;}
+.t11{font-family: Tahoma; font-size: 11px; color: #28333A;}
+form{margin: 0px}
+.t10{font-family: Tahoma; font-size: 10px; color: #28333A;}
+.t10r{font-family: Tahoma; font-size: 10px; color: #FF0000;}
+.inp1{height: 19px; width: 179px; font-family: Arial; font-size: 10px; color: #28333A; border: #D4D4D4 1px solid;}
+.BN {font-size: 20px;}
+.sTD1 { height:30px; background-color:#E3E4FA;border-bottom:1px #fff solid; border-left:1px #fff solid; padding-left:30px; } .sTD1 a {font-weight:bold;} .sTD1 a:hover { color:#fff; } li {padding-bottom:10px;}
+.pSteps{margin:3px 20px 0 0;height:15px;width:50px;padding:10px;padding-left:10px;background-color:#ffff99;color:#0000ff;font-size:12px;font-weight:bold;text-align:center;float:left;-moz-border-radius:10px;-webkit-border-radius:10px;-khtml-border-radius:10px;border-radius:10px;-moz-box-shadow:5px 5px 5px #ccc;-webkit-box-shadow:5px 5px 5px #ccc;box-shadow:5px 5px 5px #ccc;
+}
+.style7 {
+	font-size: 14px;
+	font-weight: bold;
+}
+.style8 {font-size: 14px}
+.style10 {
+	font-size: 14px;
+	color: #000000;
+	font-weight: bold;
+}
+.style29 {color: #0000FF; font-weight: bold; }
+.style33 {color: #FF0000}
+.style34 {color: #0000FF}
+.style35 {color: #000040}
+.style37 {color: #333333}
+.heading {font-size:19px;margin:46px 0 0 426px;color:#03F;font-weight:bold;text-decoration:underline;} 
+</style>
