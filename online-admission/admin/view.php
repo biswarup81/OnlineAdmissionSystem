@@ -7,13 +7,16 @@ $admin = new admin_class();
 ?>
 
 <?php
-if($_REQUEST['action']=='view'){
-   
+if(isset($_SESSION['adminid'])){
+    if($_SESSION['adminid'] == "1"){ 
+        if($_REQUEST['action']=='view'){
+            
+            
+            $id = $_REQUEST[id];
+            //print_r($details);
+        ?>
         
-        $id = $_REQUEST[id];
-//print_r($details);
-?>
-<script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
+        <script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
 <script>
 
 
@@ -222,6 +225,12 @@ function changeUserFlag(inputFlag, id){
                   </td></tr>
 </tbody>
   </table>
+<?php        
+    }
+}
+?>
+
+
 
 <?php
 }

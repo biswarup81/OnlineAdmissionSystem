@@ -6,7 +6,12 @@ $table = "application_table";
 $admin_pagelist = 200;
 $search_para = "Show All Records";
 $action = $_REQUEST['action'];
-
+if(isset($_SESSION['adminid'])){
+    
+    if($_SESSION['adminid'] == "1"){
+        
+        ?>
+<?php
 $where_field.=' and 1 ';
 
 if(isset($_GET['course_id'])  
@@ -362,3 +367,10 @@ if ($f_arr['flag'] == 1) {
 </script>
 
 <? include "footer.php";?>	
+<?php        
+    }
+}else {
+    echo("Invalid Session");
+    
+}
+?>

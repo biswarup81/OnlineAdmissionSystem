@@ -21,6 +21,7 @@ if($action=='login')
 		if($password==$pass)
 		{
 			$_SESSION['adminid']=$f_sql['id'];
+			
 			//$_SESSION['password']=$f_sql['admin_pass'];
 			 
 			//********************************************************* 

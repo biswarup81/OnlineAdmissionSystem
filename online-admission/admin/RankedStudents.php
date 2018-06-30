@@ -1,12 +1,17 @@
 <?php
 include"top.php";
 include"header.php";
+include "../../classes/admin_class.php";
 $sort_fieldname = 'id desc';
 $table = "application_table";
 $admin_pagelist = 10;
 $search_para = "Show All Records";
 $action = $_REQUEST['action'];
-
+//
+$update = new admin_class();
+if(isset($_SESSION['adminid'])){
+    
+    if($_SESSION['adminid'] == "1"){
 if ($action == "delete") {
     $inputId = $_REQUEST['id'];
     $query = "UPDATE `application_table` SET `flag`=8 where `id`='" . $inputId . "'";
@@ -22,6 +27,7 @@ if ($action == "changeFlag") {
     mysql_query($query)or die(mysql_error());
     //q("DELETE FROM dt_epin_request WHERE id='$id'");
     header("location:" . $_SERVER['PHP_SELF']);
+    $update->sendMail($inputId, 5, null, null, null, null);
     exit();
 }
 
@@ -69,6 +75,7 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
 
     }
 </script>
+
 <table cellpadding="0" cellspacing="0" width="100%" align="center" border="0" >	
     <tr>
         <td>
@@ -105,7 +112,7 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
     </tr>
 </table>
 <br />
-
+<div id="button_Panel">
 <table cellpadding="0" cellspacing="0" width="100%" align="center" border="0" >	
     <?
     //PAGINATION  SCRIPT HERE*********************************
@@ -240,7 +247,8 @@ if ($f_arr['flag'] == 1) {
                         ?>
 
                     </td>
-                    <td align="center"><a href="view.php?action=view&id=<?php echo $f_arr['id']; ?>">View</a>
+                    <td align="center"><a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=5" onclick="return confirm('Want to Admit?');">CONFIRM ADMISSION</a>
+                    <!-- <a href="view.php?action=view&id=<?php echo $f_arr['id']; ?>">View</a> -->
                         
                     <?php if ($f_arr['flag'] != 8){ ?>
                         ||<a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=delete&id=<?php echo $f_arr['id']; ?>" onclick="return confirm('Cancel this Applicatiopn?');">Cancel</a>
@@ -308,6 +316,7 @@ if ($f_arr['flag'] == 1) {
         </td>
     </tr>
 </table>
+</div>
 <script type="text/javascript">
     function generate_epin(user_id)
     {
@@ -339,5 +348,32 @@ if ($f_arr['flag'] == 1) {
 
 
 </script>
+<script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
+<script>
 
+
+function changeUserFlag(inputFlag, id){
+    //Call Ajax
+    alert(inputFlag);
+    //alert(id);
+    
+    $("#button_Panel").load("ajax/change_Application_Status.php?flag="+inputFlag+"&id="+id,function(responseTxt,statusTxt,xhr){
+		  if(statusTxt=="success"){
+                        //alert(responseTxt);
+			document.getElementById("button_Panel").innerHTML=responseTxt;
+			
+			}else if(statusTxt=="error"){
+				alert("Error: "+xhr.status+": "+xhr.statusText);
+			}
+		});
+
+}
+</script>
 <? include "footer.php";?>	
+<?php        
+    }
+}else {
+    echo("Invalid Session");
+    
+}
+?>

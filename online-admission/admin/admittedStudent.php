@@ -7,6 +7,15 @@ $admin_pagelist = 10;
 $search_para = "Show All Records";
 $action = $_REQUEST['action'];
 
+if(isset($_SESSION['adminid'])){
+    
+    if($_SESSION['adminid'] == "1"){
+        
+            ?>
+<?php
+
+
+
 if ($action == "delete") {
     $inputId = $_REQUEST['id'];
     $query = "UPDATE `application_table` SET `flag`=8 where `id`='" . $inputId . "'";
@@ -341,3 +350,10 @@ if ($f_arr['flag'] == 1) {
 </script>
 
 <? include "footer.php";?>	
+<?php        
+    }
+}else {
+    echo("Invalid Session");
+    
+}
+?>
