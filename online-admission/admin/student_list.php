@@ -247,7 +247,7 @@ if ($f_arr['flag'] == 1) {
                         ?>
 
                     </td>
-                    <td align="center"><a href="view.php?action=view&id=<?php echo $f_arr['id']; ?>">View</a>
+                    <td align="center"><a href="../print_application.php?application_num=<? echo stripslashes($f_arr['Application_No']);?>" target="_blank">View</a>
                         
                     <?php if ($f_arr['flag'] != 8){ ?>
                         ||<a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=delete&id=<?php echo $f_arr['id']; ?>" onclick="return confirm('Cancel this Applicatiopn?');">Cancel</a>
