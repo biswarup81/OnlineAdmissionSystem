@@ -26,10 +26,9 @@ define("PHY_ROOT",$_SERVER['DOCUMENT_ROOT']."/");
 
 define("CAL_DF","%d-%m-%Y");
 global $db_host,$db_login,$db_pswd,$db_name,$connected;
-
 $db_host = 'localhost';
-$db_login= 'onlinead_kandra';
-$db_pswd = '#x9I@V1RBNhu';
+$db_login= 'root';
+$db_pswd = 'GHlwdvvQBGB9';
 $db_name = 'onlinead_kandra';
 
 
@@ -43,7 +42,7 @@ $db_name = 'swarnato_ampl';*/
 
 
 
-$connected = false;
+$connected = true;
 
 /*******************************************************
 ************* Calendar Layout Options ******************

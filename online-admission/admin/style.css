@@ -1,0 +1,112 @@
+rbody {
+	font-family:Verdana; font-size:11px; BACKGROUND-COLOR: #ffffff
+}
+td {
+	font-family:Verdana; font-size:11px;
+}
+
+A:hover {
+	COLOR: #666633; TEXT-DECORATION: underline
+}
+A:active {
+	FONT-SIZE: 11px; COLOR: #014d5f; FONT-FAMILY: verdana, Verdana, helvetica, sans-serif; TEXT-DECORATION: none
+}
+A:visited {
+	FONT-SIZE: 11px; COLOR: #014d5f; FONT-FAMILY: verdana, Verdana, helvetica, sans-serif; TEXT-DECORATION: none
+}
+A:link {
+	FONT-SIZE: 11px; COLOR: #014d5f; FONT-FAMILY: verdana, Verdana, helvetica, sans-serif; TEXT-DECORATION: none
+}
+
+H1 {
+	FONT-SIZE: 12px; color: #3A5A8B;
+}
+
+.msg {
+	COLOR: #FF0000; TEXT-ALIGN: center
+}
+
+.req {
+	COLOR: #FF0000; TEXT-ALIGN: center
+}
+
+.menu{background:url(images/buttonbk.gif);  height:22px; padding-left:5px;}
+.fieldname{font-family:Verdana; font-size:11px; text-align:left; height:30px;}
+.caption{background-color:#427594; color:#FFFFFF; font-family:Verdana; font-size:11px; font-weight:bold;  text-align:left; padding-left:5px;}
+.endcap{background-image:url(images/imgcor.gif); background-repeat:no-repeat; width:13px;}
+.mainarea{ border:1px #427594 solid; border-top:3px #427594 solid; border-collapse:collapse; padding-bottom:10px; padding-top:10px; }
+
+.small_text{ font-size:11px; height:73px;color:#FFFFFF; vertical-align:middle;}
+
+SELECT {
+	BORDER-RIGHT: #999999 1px solid; BORDER-TOP: #999999 1px solid; FONT-SIZE: 11px; BACKGROUND: #ffffff; BORDER-LEFT: #999999 1px solid; COLOR: #000000; LINE-HEIGHT: normal; BORDER-BOTTOM: #999999 1px solid; FONT-STYLE: normal; FONT-FAMILY: Verdana, Verdana, Helvetica, sans-serif; FONT-VARIANT: normal; TEXT-DECORATION: none
+}
+OPTION {
+	FONT-SIZE: 11px; BACKGROUND: #ffffff; COLOR: #000000; LINE-HEIGHT: normal; FONT-STYLE: normal; FONT-FAMILY: Verdana, Verdana, Helvetica, sans-serif; FONT-VARIANT: normal; TEXT-DECORATION: none
+}
+TEXTAREA {
+	 border:1px #9CCFFF solid;
+	 BACKGROUND: #ffffff; COLOR: #1E3C4A; LINE-HEIGHT: normal; 
+	 FONT-SIZE: 11px; LINE-HEIGHT: normal; FONT-STYLE: normal; FONT-FAMILY: Verdana, Verdana, Helvetica, sans-serif; FONT-VARIANT: normal; TEXT-DECORATION: none;
+}
+
+
+input{ font-size:11px; font-family:Verdana}
+
+input.textbox {
+	 border:1px #9CCFFF solid;
+	 BACKGROUND: #9CCFFF; COLOR: #1E3C4A; LINE-HEIGHT: normal; 
+}
+file  {
+	 border:1px #9CCFFF solid;
+	 BACKGROUND: #F2F6FF; COLOR: #1E3C4A; LINE-HEIGHT: normal; 
+}
+
+
+input.radio, input.checkbox {
+	width : 1em;
+	height : 2em;
+}
+
+
+.form_button
+{
+   font-size:11px;
+   font-family:Verdana;
+   width:100px;
+   color:#000000;
+   height:22px;
+   letter-spacing:1px;
+   background-color:#8AB1CD;
+   border-top-style:solid;
+   border-top-color:#1E3C4A;
+   border-top-width:1px;
+   border-bottom-style:solid;
+   border-bottom-color:#1E3C4A;
+   border-bottom-width:1px;
+   border-left-style:solid;
+   border-left-color:#698BCA;
+   border-left-width:2px;
+   border-right-style:solid;
+   border-right-color:#698BCA;
+   border-right-width:3px;
+}
+
+.colhead{background:#E7EBEF; color:#000000; font-weight:bold; padding-left:5px; height:20px;}
+
+
+.borderall{ border:1px #3A5A8B solid; border-collapse:collapse; }
+.borderTRB{ border:1px #3A5A8B solid;border-left:0px; border-collapse:collapse; }
+.borderTBL{ border:1px #3A5A8B solid; border-right:0px; border-collapse:collapse; }
+.borderTRL{ border:1px #3A5A8B solid; border-bottom:0px; border-collapse:collapse; }
+.borderR{ border-right:1px #3A5A8B solid; border-collapse:collapse; }
+
+.page_link_table{BACKGROUND-COLOR: #ffffff; COLOR: #0066cc; FONT: 10px Verdana, Helvetica, sans-serif; HEIGHT: 25px; MARGIN-BOTTOM: 10px; WIDTH: auto}
+.page_link_table A:link{font-family:Verdana, Helvetica, sans-serif;font-weight:bold;font-size:11px; color:#006699; text-decoration:none }
+.page_link_table A:hover{font-family:Verdana, Helvetica, sans-serif;font-weight:bold;font-size:11px; color:#006699; text-decoration:none }
+.page_link_table A:active{font-family:Verdana, Helvetica, sans-serif;font-weight:bold;font-size:11px; color:#006699; text-decoration:none }
+.page_link_table A:visited{font-family:Verdana, Helvetica, sans-serif;font-weight:bold;font-size:11px; color:#006699; text-decoration:none }
+
+
+
+
