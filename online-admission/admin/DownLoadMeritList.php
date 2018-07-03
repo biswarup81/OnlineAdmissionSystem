@@ -159,6 +159,7 @@ if($action=='inactive')
                 	<td width="6%">Sl.</td>
                     <td width="18%">Course Level</td>
                     <td width="12%">Course Name</td>
+                    <td width="6%"></td>
                     <td width="10%">General</td>
                     <td width="10%">SC</td>
                     <td width="10%">ST</td>
@@ -186,6 +187,7 @@ if($action=='inactive')
 						//$cl=$f_arr['Course_Id'];
 						//$fcl=mysql_fetch_array(mysql_query("select * from course_table where CourseId='$cl'"));
 						echo $f_arr['Course_Name'];?></td>
+						<td width="6%"><a href='merit_List.php?COURSE=<?php echo $f_arr['Course_Id'] ; ?>&COURSE_LEVEL=<?php echo $f_arr['Course_Level_Id']; ?>'>View</a></td>
                         <td><a href='../../classes/excelDownloader.php?MODE=SHOW_RANK&COURSE=<?php echo $f_arr['Course_Id'] ; ?>&COURSE_LEVEL=<?php echo $f_arr['Course_Level_Id']; ?>&CAT=GEN'>DOWNLOAD to Excel</a></td>
                         <td><a href='../../classes/excelDownloader.php?MODE=SHOW_RANK&COURSE=<?php echo $f_arr['Course_Id'] ; ?>&COURSE_LEVEL=<?php echo $f_arr['Course_Level_Id']; ?>&CAT=SC'>DOWNLOAD to Excel</a></td>
                         <td><a href='../../classes/excelDownloader.php?MODE=SHOW_RANK&COURSE=<?php echo $f_arr['Course_Id'] ; ?>&COURSE_LEVEL=<?php echo $f_arr['Course_Level_Id']; ?>&CAT=ST'>DOWNLOAD to Excel</a></td>
