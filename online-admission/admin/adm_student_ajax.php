@@ -4,15 +4,26 @@ include"top.php";
 <?php 
           $Appl_No = $_GET['application_num'];
           
-          $app_sql = "SELECT `id`, `Application_No`, `password`, `Application_Fee`, `Demand_Draft_No`, 
-                    `First_Name`, `Middle_Name`, `Last_Name`, `Gurdian_Name`, `Gurdian_Mobile_No`, `Gurdian_Relation`, `Other_Relation`, 
-                    `occu`, `other_occu`, `desi`, `income`, `Gender`, `Date_Of_Birth`, `Category`, `Physically_Challenged`, `Religion`, 
-                    `other_religion`, `Nationality`, `Address`, `ZIP_PIN`, `Address_1`, `pin2`, `Address_2`, `Country`, `Mobile`, 
-                    `Land_Phone_No`, `email`, `Total_Marks`, `Bank_Payment_Verified`, `admit`, `course_id`, `course_level_id`, `session_id`,
-                    `submit_date`, `flag`, `state`, `district`, `CREATE_DATE`, `Course_Level_New`, `ADMISSION_ACCEPTANCE_DATE` 
-                    FROM `application_table` where Application_No = '$Appl_No'";
+          $app_sql = "SELECT a.id,a.Application_No,a.password,a.Application_Fee,
+                    a.Demand_Draft_No,a.First_Name,a.Middle_Name,a.Last_Name,a.Gurdian_Name,
+                    a.Gurdian_Mobile_No,a.Gurdian_Relation,
+                    a.Other_Relation,a.occu,a.other_occu,a.desi,a.income,a.Gender,a.Date_Of_Birth,
+                    a.Category,a.Physically_Challenged,a.Religion,a.other_religion,a.Nationality,
+                    a.Address,a.ZIP_PIN,a.Address_1,a.pin2,a.Address_2,a.Country,a.Mobile,a.Land_Phone_No,
+                    a.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
+                    a.course_level_id,a.session_id,a.submit_date,a.flag,a.state,a.district, 
+                    b.Course_Level_Name, c.Course_Name 
+                    FROM application_table a, course_level b, course_table c, admission_flag d 
+                    where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId
+                    and d.FLAG_ID=a.flag and  a.Application_No = '$Appl_No'";
          //  echo $app_sql;
-          $result = mysql_query($app_sql) or die(mysql_error());
+          $conn = new mysqli("localhost", "root", "welcome1", "onlinead_kandra");
+          $result = $conn->query($app_sql);
+          $outp = array();
+          $outp = $result->fetch_all(MYSQLI_ASSOC);
+          //
+          echo json_encode($outp);
+          /* $result = mysql_query($app_sql) or die(mysql_error());
           
           $return_arr = array();
           
@@ -60,12 +71,12 @@ include"top.php";
               $row_array['state'] = $row['state'];
               $row_array['district'] = $row['district'];
               $row_array['CREATE_DATE'] = $row['CREATE_DATE'];
-              $row_array['Course_Level_New'] = $row['Course_Level_New'];
+             // $row_array['Course_Level_New'] = $row['Course_Level_New'];
               $row_array['ADMISSION_ACCEPTANCE_DATE'] = $row['ADMISSION_ACCEPTANCE_DATE'];
               
               array_push($return_arr,$row_array);
-          }
-          echo json_encode($return_arr);
+          } 
+          echo json_encode($return_arr);*/
 ?>
 
 			

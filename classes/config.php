@@ -28,7 +28,7 @@ define("CAL_DF","%d-%m-%Y");
 global $db_host,$db_login,$db_pswd,$db_name,$connected;
 $db_host = 'localhost';
 $db_login= 'root';
-$db_pswd = 'GHlwdvvQBGB9';
+$db_pswd = 'welcome1';
 $db_name = 'onlinead_kandra';
 
 
