@@ -69,10 +69,14 @@ $where_field = " WHERE 1" . $where_field;
 <script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
 <script>
     function changeFlag(inputFlag, id){
-        $("#button_Panel").load("ajax/change_Application_Status.php?flag="+inputFlag+"&id="+id,function(responseTxt,statusTxt,xhr){
+        //alert('Change flag clicked');
+		//alert("row_"+id);
+		$("#row_"+id).html('Admitting...Wait..');
+		
+        $("#row_"+id).load("ajax/change_Application_Status.php?flag="+inputFlag+"&id="+id,function(responseTxt,statusTxt,xhr){
 		  if(statusTxt=="success"){
-                        alert(responseTxt);
-			document.getElementById("button_Panel").innerHTML=responseTxt;
+                        //alert(responseTxt);
+			//document.getElementById("button_Panel").innerHTML="Admitted";
 			
 			}else if(statusTxt=="error"){
 				alert("Error: "+xhr.status+": "+xhr.statusText);
@@ -218,7 +222,7 @@ echo stripslashes($fetch_app_no['Roll_Index_No']);
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['ZIP_PIN']);?></td>
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['Application_No']);?></td>
                     <td style="padding-left:5px;"><? echo stripslashes(date("d-M-Y",strtotime($f_arr['submit_date'])));?></td>
-                    <td style="padding-left:5px;" align="center" >
+                    <td style="padding-left:5px;" align="center" id="row_<?php echo $f_arr['id']; ?>" >
 <?php
 //Flag 1 - DRAFT
  //echo 'appl ID:'.$f_arr['id'];
@@ -236,7 +240,7 @@ if ($f_arr['flag'] == 1) {
                                  <?php if($f_arr['Admission_Fee'] == ""){?>
                                      ACCEPTED || Admission Fee Due
                                   <?php } else{?>
-                            <input type="button" id="submit_button" onclick="changeFlag(5,<?=$f_arr['id']?>)" value="CONIRM ADMISSION" />
+                            <input type="button" id="submit_button" onclick="changeFlag(5,<?php echo $f_arr['id'];?>)" value="CONIRM ADMISSION" />
                                     <?php }?>
                             
                         <?php }else if ($f_arr['flag'] == 8) { ?>
