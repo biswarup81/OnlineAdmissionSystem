@@ -1,4 +1,4 @@
-<?
+<?php
 ob_start();
 session_start();
 //error_reporting(E_ALL ||E_NOTICE|| E_WARNING);
@@ -21,23 +21,23 @@ define("LINK_NAME","Ruby India");
 define("LINK","http://www.rubyglitz.com/");
 
 $show_rec_per_page=5;
-
+	
 define("PHY_ROOT",$_SERVER['DOCUMENT_ROOT']."/");
 
 define("CAL_DF","%d-%m-%Y");
 global $db_host,$db_login,$db_pswd,$db_name,$connected;
 $db_host = 'localhost';
 $db_login= 'root';
-$db_pswd = 'GHlwdvvQBGB9';
-$db_name = 'onlinead_kandra';
+$db_pswd = 'ot288fO8JypG';
+$db_name = 'online_admission_system_app';
 
 
 
 
 /*$db_host = 'localhost';
- $db_login= 'swarnato_ampl';
- $db_pswd = 'swarnato_ampl123';
- $db_name = 'swarnato_ampl';*/
+$db_login= 'swarnato_ampl';
+$db_pswd = 'swarnato_ampl123';
+$db_name = 'swarnato_ampl';*/
 
 
 
@@ -45,11 +45,11 @@ $db_name = 'onlinead_kandra';
 $connected = true;
 
 /*******************************************************
- ************* Calendar Layout Options ******************
- *******************************************************/
+************* Calendar Layout Options ******************
+*******************************************************/
 
-// Maximum number of event titles that appear per day
-// on month-view.  Note: doesn't limit number of
+// Maximum number of event titles that appear per day 
+// on month-view.  Note: doesn't limit number of 
 // events a user can post, just what appears on month
 // view.
 define("MAX_TITLES_DISPLAYED", 5);
@@ -70,14 +70,14 @@ define("WEEK_START", 0);
 // hours 1-12 with an am/pm, and "24hr" which
 // display hours 00-23 with no am/pm.
 define("TIME_DISPLAY_FORMAT", "12hr");
-// This directive allows you to specify a number
-// of hours by which the current time will be
+// This directive allows you to specify a number 
+// of hours by which the current time will be 
 // offset.  The current time is used to highlight
-// the present day on the month-view calendar, and
-// it is sometimes necessary to adjust the current
-// time, so that the present day does not roll-over
-// too early, or too late, for your intended
-// audience.  Both positive and negative integer
+// the present day on the month-view calendar, and 
+// it is sometimes necessary to adjust the current 
+// time, so that the present day does not roll-over 
+// too early, or too late, for your intended 
+// audience.  Both positive and negative integer 
 // values are valid.
 
 

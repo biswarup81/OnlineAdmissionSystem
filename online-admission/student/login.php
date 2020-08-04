@@ -10,25 +10,31 @@ $rowObj = $admin->getCollegeDetails();
 $action=$_REQUEST['action'];
 
 $match = false;
-$user_name = ""; 
+$user_name = "";
+//$msg = ""; 
 if($action=='login') {
     $uname=stripslashes($_POST['user']);
-    $pass=stripslashes($_POST['pass']);
-    $query = "SELECT * FROM application_table WHERE email = '$uname' or Gurdian_Mobile_No = '$uname' ";
+    $pass=md5(stripslashes($_POST['pass']));
+    $query = "SELECT * FROM `user` WHERE email = '$uname' ";
     $result = mysql_query($query) or die(mysql_error());
     if(mysql_num_rows($result) > 0){
         while($row = mysql_fetch_array($result)){
-            $password = $row['password'];
+            if($row['is_verified'] == 'N'){
+			  	echo "<script>alert('Not a verified Account!\\nVerify your detail through otp');
+                 window.location.href='../index.php';</script>";
+			}else{
+			$password = $row['password'];
 
             if($password == $pass){
                 $match = true;
-                
-                $user_name = $row['First_Name']." ".$row['Last_Name'];
+                $uid = $row['user_id'];
+                $user_name = $row['fname']." ".$row['lname'];
             } 
+		  }
         }
     }
     if($match == true){
-        $_SESSION['user_id'] = $uname;
+        $_SESSION['user_id'] = $uid;
         $_SESSION['user_name']=$user_name;
         $_SESSION['user_type']= "STUDENT";
         header("location:index.php");
@@ -54,7 +60,7 @@ if($action=='login') {
 
                 if (document.f1.user.value == "")
                 {
-                    alert("Enter the mobile number / E-Mail");
+                    alert("Enter the E-Mail");
                     document.f1.user.focus();
                     return false;
                 }
@@ -87,7 +93,7 @@ if($action=='login') {
                             <TD height=25>Welcome to <STRONG><?php echo $rowObj->name ?> Student Panel </STRONG>!</TD>
                         </TR>
                         <TR>
-                            <TD vAlign=top>Use a valid <STRONG>Phone Num / E-Mail</STRONG> and <STRONG>password</STRONG> to gain access to the administration console.</TD>
+                            <TD vAlign=top>Use a valid <STRONG>E-Mail</STRONG> and <STRONG>password</STRONG> to gain access to the administration console.</TD>
                         </TR>
                         <TR>
                             <TD>&nbsp;</TD>
@@ -114,7 +120,7 @@ if($action=='login') {
                                                     <TD>
                                                         <FORM name="f1" onSubmit="return checkthis()" action="login.php?action=login" method="post">
                                                             <TABLE borderColor=#000000 cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
-                                                                <? if($msg<>''){ ?>
+                                                                <? if($msg !=''){ ?>
                                                                 <TR>
                                                                     <TD valign="top" colspan="4" style="font-family:verdana; font-size:11px; color:#FF0000; padding-left:25px;">
                                                                         <?= $msg ?>	
@@ -129,7 +135,7 @@ if($action=='login') {
                                                                 </TR>
                                                                 <TR>
                                                                     <TD vAlign=center align=middle>&nbsp;</TD>
-                                                                    <TD vAlign=center align=right height=25>E-Mail/Phone Number:</TD>
+                                                                    <TD vAlign=center align=right height=25>E-Mail:</TD>
                                                                     <TD vAlign=center align=left>&nbsp;</TD>
                                                                     <TD vAlign=center align=left><INPUT size=25 name="user" autocomplete="off"></TD>
                                                                 </TR>

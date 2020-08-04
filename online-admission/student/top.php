@@ -4,6 +4,9 @@ require "../../classes/config.php";
 require "../../classes/mysql.php";
 require "../../classes/functions.php";
 require "../../classes/conn.php";
+/*for smtp mailing*/
+include "../../phpmailer/PHPMailerAutoload.php";
+include "../../sendMail.php";
 
 $admin_pagelist=20;
 $f_limit=f(q("select * from dt_charlimit"));

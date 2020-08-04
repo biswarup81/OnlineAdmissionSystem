@@ -45,6 +45,7 @@ if($action=='search')
 /*Make Where Clause*/
 
 $where_field=" WHERE 1 and c.Course_Level_Id=cl.Course_Level_Id and c.Course_Id=ct.CourseId ".$where_field;
+##$where_field=" WHERE 1 and c.Course_Level_Id=cl.Course_Level_Id and c.Course_Id=ct.CourseId and cl.Course_Level_Id not in (11,12) ".$where_field;
 
 
 #############################################

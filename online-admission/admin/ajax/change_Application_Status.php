@@ -33,7 +33,7 @@ if($inputFlag == 2){
     $rows = $admin->getApplicationDetailsById($inputId);
     
     $email = $rows->email;
-    $mobile_number = $rows->Gurdian_Mobile_No;   
+    $mobile_number = $rows->mobile;   
     $course_id = $rows->course_id;
     $course_level_id = $rows->course_level_id;
     $category = $rows->Category;

@@ -82,11 +82,9 @@ $sql_chk="SELECT * FROM `application_table` order by id desc limit 1";
 $s=mysql_query($sql_chk);
 if(mysql_num_rows($s)>0){
 	$chk_table_dtls=mysql_fetch_array($s);
-	$chk_date=date("Ymd",strtotime($chk_table_dtls['submit_date']));
+	$chk_date=substr($chk_table_dtls['Application_No'],0,8);
 	if(date("Ymd")<=$chk_date){
-			$sql_app_no="SELECT max(Application_No) FROM `application_table`";
-			$ft_app_no=mysql_fetch_array(mysql_query($sql_app_no));
-			$application_no=$ft_app_no['max(Application_No)']+1;
+			$application_no=$chk_table_dtls['Application_No']+1;
 	}else{
 			$application_no=date("Ymd")."0001";
 		}
@@ -119,16 +117,77 @@ mysql_query($sql_ap_dtls) or die(mysql_error());
 $applicastion_table_id = mysql_insert_id();
 
 for($i=0;$i<6;$i++){	
-	$sql_ap_marks="INSERT INTO `applicaion_marks`(`Application_No`, `Board`, `Other_Board_Name`, `Exam_Name`, `Roll_Index_No`, `Year_of_Passing`, `Subject`, `Marks_Obtained`, `Full_Marks`, `Pass_Fail_Remarks`) VALUES ('$application_no','$U_council','$Uv_others','','$U_roll2','$select2','$subjN[$i]','$m[$i]','$full[$i]','$grade[$i]')";
+	$sql_ap_marks="INSERT INTO `applicaion_marks`(`Application_No`, `Board`, `Other_Board_Name`, `Exam_Name`, `Roll_Index_No`, `Year_of_Passing`, `Subject`, `Marks_Obtained`, `Full_Marks`, `Pass_Fail_Remarks`,`Hs_No`) VALUES ('$application_no','$U_council','$Uv_others','','$U_roll2','$select2','$subjN[$i]','$m[$i]','$full[$i]','$grade[$i]','$U_roll3')";
+
 	
 	//echo $sql_ap_marks;
-	mysql_query($sql_ap_marks);
+	//echo $U_roll3;
+	mysql_query($sql_ap_marks) or die(mysql_error());
 }
 //$sql_ap_rank="INSERT INTO `rank_table`(`Session_Id`, `Application_No`, `SC_Rank`, `ST_Rank`, `OBC_A_Rank`, `OBC_B_Rank`, `General_Rank`, `Round`) VALUES ('','$application_no','','','','','','')";
 $Unique_No=$application_no."".$D1."".$select;
 mysql_query("INSERT INTO `admission_payments`(`Application_No`, `course_id`, `course_level_id`, `Unique_No`, `Payment_date`, `create_date`, `BRANCH`) VALUES ('$application_no','$D1','$select','$Unique_No','$Payment_date',NOW(), '$branch' )");
 //mysql_query($sql_ap_marks);
 
+function uploadFile($fieldId, $fname) {
+    // Check if the form was submitted
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Check if file was uploaded without errors
+        if (isset($_FILES["$fieldId"]) && $_FILES["$fieldId"]["error"] == 0) {
+            $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "JPG" => "image/JPG", "JPEG" => "image/JPEG", "pdf" => "application/pdf");
+            $filename = $_FILES["$fieldId"]["name"];
+            $filetype = $_FILES["$fieldId"]["type"];
+            $filesize = $_FILES["$fieldId"]["size"];
+            // Verify file extension
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            if (!array_key_exists($ext, $allowed)) die("Error: Please select a valid file format.\n");
+            // Verify file size - 5MB maximum
+            $maxsize = 10 * 1024 * 1024;
+            if ($filesize > $maxsize) die("Error: File size is larger than the allowed limit.\n");
+            // Verify MYME type of the file
+            if (in_array($filetype, $allowed)) {
+                // Check whether file exists before uploading it
+                if (file_exists("/pg/ulasset/" . $fname.".".$ext)) {
+                   // echo $filename . " is already exists.";
+                } else {
+                    move_uploaded_file($_FILES["$fieldId"]["tmp_name"], "/pg/ulasset/" . $fname.".".$ext);
+                   // echo "Your files was uploaded successfully.";
+                }
+            } else {
+                echo "Error: There was a problem uploading your file. Please try again.\n";
+            }
+        } else {
+            //echo "Error: " . $_FILES["$fieldId"]["error"]."\n";
+        }
+    }
+}
+
+uploadFile('pp-photo',"$application_no".'-pp-photo');
+uploadFile('dob-proof',"$application_no".'-dob-proof');
+if($radio3!="GEN"){
+uploadFile('caste-proof',"$application_no".'-caste-proof');
+}
+if($ph_radio3=="YES"){
+uploadFile('disability-cert',"$application_no".'-disability-cert');
+}
+uploadFile('secondary-marksheet',"$application_no".'-secondary-marksheet');
+uploadFile('hs-marksheet',"$application_no".'-hs-marksheet');
+
+$pp_photo_file_name=$application_no.'-pp-photo.'.pathinfo($_FILES["pp-photo"]["name"], PATHINFO_EXTENSION);
+$dob_proof_file_name=$application_no.'-dob-proof.'.pathinfo($_FILES["dob-proof"]["name"], PATHINFO_EXTENSION);
+$caste_proof_file_name="";
+if($radio3!="GEN"){
+$caste_proof_file_name=$application_no.'-caste-proof.'.pathinfo($_FILES["caste-proof"]["name"], PATHINFO_EXTENSION);
+}
+$disability_cert_file_name="";
+if($ph_radio3=="YES"){
+$disability_cert_file_name=$application_no.'-disability-cert.'.pathinfo($_FILES["disability-cert"]["name"], PATHINFO_EXTENSION);
+}
+$secondary_marksheet_file_name=$application_no.'-secondary-marksheet.'.pathinfo($_FILES["secondary-marksheet"]["name"], PATHINFO_EXTENSION);
+$hs_marksheet_file_name=$application_no.'-hs-marksheet.'.pathinfo($_FILES["hs-marksheet"]["name"], PATHINFO_EXTENSION);
+
+$insert_file_name_query="INSERT INTO at_uploadfiles(Application_No, DOB_File_Name, Caste_Cert_File_Name, Disablility_File_Name, Secondary_Markheet_File_Name, HS_Markheet_File_Name,PP_Photo_File_Name) VALUES ('$application_no','$dob_proof_file_name','$caste_proof_file_name','$disability_cert_file_name','$secondary_marksheet_file_name','$hs_marksheet_file_name','$pp_photo_file_name')";
+mysql_query($insert_file_name_query) or die(mysql_error());
 
 
 			//$fromName = $_GET['name'];
@@ -158,6 +217,7 @@ mysql_query("INSERT INTO `admission_payments`(`Application_No`, `course_id`, `co
 
 			//echo "Application No:".$application_no;
 
+
 ?>
 <html>
 <head>
@@ -170,7 +230,8 @@ mysql_query("INSERT INTO `admission_payments`(`Application_No`, `course_id`, `co
 </body>
 </html>
 		
-<?php }else{
+<?php
+}else{
 	header("Location:index.php");
 }
 

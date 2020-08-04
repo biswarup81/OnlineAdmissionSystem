@@ -19,7 +19,7 @@ if($_REQUEST['action']=="submit"){
 	
 	else{
 		//$sql=mysql_query("select * from admin where id='$adminid' and pass='$oldpassword'");
-                mysql_query("update application_table a set a.password='$newpassword' where (a.email = '$uname' or a.Gurdian_Mobile_No = '$uname') ") or die(mysql_error());
+                mysql_query("update user a set a.password='$newpassword' where (a.email = '$uname' or a.mobile = '$uname') ") or die(mysql_error());
                 $print="Password Sucessfully Changed.";
 		/*if(mysql_num_rows($sql)>0){
 			mysql_query("update admin set pass='$newpassword' where id='$adminid'");

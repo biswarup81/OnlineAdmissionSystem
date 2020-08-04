@@ -10,7 +10,7 @@ $admin = new admin_class();
 <script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
 <script>
 
-	function generateMeritList(){
+	function generateMeritList1(){
 		alert("generate button cicked");
 		document.getElementById("GENERATE_BUTTON").style = "display:none";
 		document.getElementById("loader").style = "display:block";
@@ -67,7 +67,7 @@ $admin = new admin_class();
 	if($active == 1) {
 		
 ?>
-    <input type="BUTTON" id="GENERATE_BUTTON" value="GENERATE MERIT LIST"  onclick="generateMeritList()"/>
+    <input type="BUTTON" id="GENERATE_BUTTON" value="GENERATE MERIT LIST"  onclick="generateMeritList1()"/>
     <input type="HIDDEN" id="hidden_iteration" value="<?php echo $result->iteration ; ?>" name="ITERATION"/>
     
     <?php $query = "select

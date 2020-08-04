@@ -2,8 +2,10 @@
 include"top.php";
 include"header.php";
 include "../../classes/admin_class.php";
-$sort_fieldname = 'id desc';
-$table = "application_table";
+$sort_fieldname = 'a.id desc';
+$table = "application_table a";
+$table2="personal_details b";
+$table3 = "user c";
 $admin_pagelist = 10;
 $search_para = "Show All Records";
 $action = $_REQUEST['action'];
@@ -25,7 +27,20 @@ if ($action == "changeFlag") {
 //$inputId = filter_input(INPUT_GET, 'id');
     $query = "UPDATE `application_table` SET `flag`='" . $inputFlag . "' where `id`='" . $inputId . "'";
     mysql_query($query)or die(mysql_error());
-    //q("DELETE FROM dt_epin_request WHERE id='$id'");
+	if($inputFlag == 5)
+	{
+	$query = "UPDATE `application_rank_status` SET `admit_flag`= 1 "
+	. " where application_no =(select application_no from application_table where `id`='" . $inputId . "')"
+	. " and rank_category = (select p.Category from application_table a,personal_details p where a.`id`='" . $inputId . "' AND a.user_id = p.user_id )";
+	mysql_query($query)or die(mysql_error());
+	if(mysql_affected_rows()<1)
+	{
+		$query = "UPDATE `application_rank_status` SET `admit_flag`= 1 " .
+		" where application_no =(select application_no from application_table where `id`='" . $inputId . "')" .
+		" AND rank_category = 'GEN'";
+		mysql_query($query)or die(mysql_error());
+	}
+	}    //q("DELETE FROM dt_epin_request WHERE id='$id'");
     header("location:" . $_SERVER['PHP_SELF']);
     $update->sendMail($inputId, 5, null, null, null, null);
     exit();
@@ -40,22 +55,22 @@ if ($action == 'search') {
 
     if (isset($_POST['start_dt']) && $_POST['start_dt'] <> "") {
         $start_dt = $_POST['start_dt'];
-        $where_field.=" AND submit_date>='" . date("Y-m-d", strtotime(($_POST['start_dt']))) . "'";
+        $where_field.=" AND a.submit_date>='" . date("Y-m-d", strtotime(($_POST['start_dt']))) . "'";
     }
     if (isset($_POST['to_dt']) && $_POST['to_dt']) {
         $to_dt = $_POST['to_dt'];
-        $where_field.=" AND submit_date<='" . date("Y-m-d", strtotime(($_POST['to_dt']))) . "'";
+        $where_field.=" AND a.submit_date<='" . date("Y-m-d", strtotime(($_POST['to_dt']))) . "'";
     }
 
     if (isset($_POST['appNo']) && $_POST['appNo']) {
         //echo "fg";
         $appNo = $_POST['appNo'];
-        $where_field.=" AND Application_No like '%" . $_POST['appNo'] . "%'";
+        $where_field.=" AND a.Application_No like '%" . $_POST['appNo'] . "%'";
     }
 }
 /* Make Where Clause */
 
-$where_field = " WHERE 1 and flag=3" . $where_field;
+$where_field = " WHERE 1 and a.flag=3" . $where_field;
 ?>
 <script>
     function changeFlag(inputFlag, id) {
@@ -124,7 +139,9 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
     {
     $from=0;
     }
-    $sql=q(" SELECT * FROM $table order by $sort_fieldname ");
+//$sql1 = " SELECT * FROM $table,$table2,$table3 WHERE a.user_id=b.user_id AND a.user_id=c.user_id order by $sort_fieldname ";
+    $sql=q(" SELECT * FROM $table,$table2,$table3 WHERE a.user_id=b.user_id AND a.user_id=c.user_id order by $sort_fieldname ");
+//echo $sql1;
     //$sql=q(" SELECT * FROM dt_epin_request order by user_id desc ");
 
     $rec_count=(int)nr($sql);
@@ -149,7 +166,7 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
 
                 if($show_rec_per_page >= $rec_count)
                 {
-                $search_query = "SELECT * FROM $table ".$where_field." ORDER BY $sort_fieldname";
+                $search_query = "SELECT * FROM $table,$table2,$table3  ".$where_field." AND a.user_id=b.user_id AND a.user_id=c.user_id ORDER BY $sort_fieldname";
                 }
                 else
                 {
@@ -163,10 +180,10 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
                 $page_num = $page_count;		
                 }	
                 $from = ($page_num - 1) * $show_rec_per_page;
-                $search_query = "SELECT * FROM $table ".$where_field." ORDER BY $sort_fieldname limit $from, $show_rec_per_page";
+                $search_query = "SELECT * FROM $table,$table2,$table3  ".$where_field." AND a.user_id=b.user_id AND a.user_id=c.user_id ORDER BY $sort_fieldname limit $from, $show_rec_per_page";
 
                 }	
-                //echo $search_query;
+              //  echo $search_query;
                 $tot_rec=(int)nr(q($search_query));
                 if($tot_rec<>0)
                 {
@@ -177,7 +194,8 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
                     <td width="2%" class="colhead">#</td>
                     <td width="10%" class="colhead"> Name </td>
                     <td width="5%" class="colhead">Mobile</td>	
-                    <td width="8%" class="colhead">Application Fee </td>		
+                    <td width="8%" class="colhead">Application Fee </td>
+                   <td width="8%" class="colhead">Admission Fee </td>		
                     <td width="8%" class="colhead">Roll-Index No</td>
                     <td width="8%" class="colhead">Pin</td>
                     <td width="8%" class="colhead">Application No</td>	
@@ -196,17 +214,20 @@ $where_field = " WHERE 1 and flag=3" . $where_field;
                 while($f_arr=f($q_arr))
                 {
 
-
+                 
                 ?>
+     <?php // echo 'ID:'.$f_arr['id'];?>
                 <tr bgcolor="#ffffff" onMouseOver=bgColor = "#EFF7FF" onMouseOut=bgColor = "#ffffff">
                     <td style="padding-left:5px;"><? echo $slno;?></td>
 
-                    <td style="padding-left:5px;"><?php echo stripslashes($f_arr['First_Name']) . " " . stripslashes($f_arr['Last_Name']); ?></td>
-                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['Gurdian_Mobile_No']);?></td>
+                    <td style="padding-left:5px;"><?php echo stripslashes($f_arr['fname']) . " " . stripslashes($f_arr['lname']); ?></td>
+                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['mobile']);?></td>
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['Application_Fee']);?></td>
+                   <td style="padding-left:5px;"><? echo stripslashes($f_arr['Admission_Fee']);?></td>
                     <td style="padding-left:5px;"><?php
 $appNoTest = $f_arr['Application_No'];
-$fetch_app_no = mysql_fetch_array(mysql_query("select * from applicaion_marks where Application_No='" . $appNoTest . "' limit 1"));
+$user_id =  $f_arr['user_id'];
+$fetch_app_no = mysql_fetch_array(mysql_query("select * from academic_details  where User_id='" . $user_id . "' limit 1"));
 echo stripslashes($fetch_app_no['Roll_Index_No']);
 ?></td>
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['ZIP_PIN']);?></td>
@@ -226,8 +247,12 @@ if ($f_arr['flag'] == 1) {
 
 
                         <?php } else if ($f_arr['flag'] == 4) { ?>
+                                   <?php  if($f_arr['Admission_Fee'] ==""){?>
+                                          ADMISSION FEE DUE
+                                  <?php  }else{?>
 
                             <a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=5" onclick="return confirm('Want to Admit?');">CONFIRM ADMISSION</a>
+  <?php } ?>
                         <?php }else if ($f_arr['flag'] == 8) { ?>
                                 DELETED
                         <?php } else if ($f_arr['flag'] == 9) { ?>
@@ -247,7 +272,13 @@ if ($f_arr['flag'] == 1) {
                         ?>
 
                     </td>
-                    <td align="center"><a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=5" onclick="return confirm('Want to Admit?');">CONFIRM ADMISSION</a>
+                    <td align="center">
+                    
+                     <?php  if($f_arr['Admission_Fee'] ==""){?>
+                       ADMISSION FEE DUE
+                <?php  }else{?>
+<a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=5" onclick="return confirm('Want to Admit?');">CONFIRM ADMISSION</a>
+         <?php } ?>
                     <!-- <a href="view.php?action=view&id=<?php echo $f_arr['id']; ?>">View</a> -->
                         
                     <?php if ($f_arr['flag'] != 8){ ?>

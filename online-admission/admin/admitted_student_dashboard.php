@@ -3,32 +3,33 @@ include"top.php";
 include"header.php";
 
 $sql = "SELECT SUM(
-        CASE WHEN a.Category = 'GEN'
+        CASE WHEN b.rank_category = 'GEN'
         THEN 1
         ELSE 0
         END ) AS GEN, SUM(
-        CASE WHEN a.Category = 'SC'
+        CASE WHEN b.rank_category = 'SC'
         THEN 1
         ELSE 0
         END ) AS SC, SUM(
-        CASE WHEN a.Category = 'ST'
+        CASE WHEN b.rank_category = 'ST'
         THEN 1
         ELSE 0
         END ) AS ST, SUM(
-        CASE WHEN a.Category = 'OBC-A'
+        CASE WHEN b.rank_category = 'OBC-A'
         THEN 1
         ELSE 0
         END ) AS 'OBC-A', SUM(
-        CASE WHEN a.Category = 'OBC-B'
+        CASE WHEN b.rank_category = 'OBC-B'
         THEN 1
         ELSE 0
         END ) AS 'OBC-B', session_table.session_name, course_level.course_level_name, course_table.course_name, 
         a.course_id, a.course_level_id
         FROM application_table a
+		LEFT JOIN application_rank_status b on a.application_no = b.application_no
         LEFT JOIN session_table ON a.session_id = session_table.sessionid
         LEFT JOIN course_level ON a.course_level_id = course_level.course_level_id
         LEFT OUTER JOIN course_table ON a.course_id = course_table.courseid
-        where a.flag=5
+        where a.flag=5 and b.admit_flag = 1
         GROUP BY session_table.session_name, course_level.course_level_name, course_table.course_name
         order by course_table.course_name, course_level.course_level_name ";
        

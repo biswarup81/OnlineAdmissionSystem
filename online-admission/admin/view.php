@@ -167,8 +167,9 @@ function changeUserFlag(inputFlag, id){
              
             </tr>
  <?php $appNo=$details->Application_No;
+$user_id = $details->user_id;
  $query2 = "SELECT b.Subject_Name, a.Marks_Obtained, a.Full_Marks, a.Pass_Fail_Remarks, a.Board, a.Roll_Index_No, a.Year_of_Passing"
-                . " FROM applicaion_marks a, subject_master b WHERE a.`Application_No`='$appNo' and a.subject = b.subject_Id order by a.Id asc";
+                . " FROM academic_details a, subject_master b WHERE a.`User_id`='$user_id' and a.subject = b.subject_Id order by a.Id asc";
        
          $marksQuery1=mysql_query($query2) or die(mysql_error());
 

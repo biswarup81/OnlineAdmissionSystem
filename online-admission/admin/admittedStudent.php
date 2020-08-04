@@ -1,20 +1,26 @@
 <?php
 include"top.php";
 include"header.php";
-$sort_fieldname = 'id desc';
-$table = "application_table";
-$admin_pagelist = 10;
+$sort_fieldname = 'a.id asc';
+$table = "application_table a";
+$table2 = "personal_details p";
+$table3 = "user u";
+$admin_pagelist = 200;
 $search_para = "Show All Records";
 $action = $_REQUEST['action'];
-
 if(isset($_SESSION['adminid'])){
     
     if($_SESSION['adminid'] == "1"){
         
-            ?>
+        ?>
 <?php
+$where_field.=' and 1 ';
 
+if(isset($_GET['course_id'])  
+        && isset($_GET['course_level_id']) && isset($_GET['category'])){
 
+    $where_field.=" AND a.course_id = '".$_GET['course_id']."' AND a.course_level_id = '".$_GET['course_level_id']."' AND p.Category ='".$_GET['category']."'";
+}
 
 if ($action == "delete") {
     $inputId = $_REQUEST['id'];
@@ -43,41 +49,40 @@ if ($action == 'search') {
 
     if (isset($_POST['start_dt']) && $_POST['start_dt'] <> "") {
         $start_dt = $_POST['start_dt'];
-        $where_field.=" AND submit_date>='" . date("Y-m-d", strtotime(($_POST['start_dt']))) . "'";
+        $where_field.=" AND a.submit_date>='" . date("Y-m-d", strtotime(($_POST['start_dt']))) . "'";
     }
     if (isset($_POST['to_dt']) && $_POST['to_dt']) {
         $to_dt = $_POST['to_dt'];
-        $where_field.=" AND submit_date<='" . date("Y-m-d", strtotime(($_POST['to_dt']))) . "'";
+        $where_field.=" AND a.submit_date<='" . date("Y-m-d", strtotime(($_POST['to_dt']))) . "'";
     }
 
     if (isset($_POST['appNo']) && $_POST['appNo']) {
         //echo "fg";
         $appNo = $_POST['appNo'];
-        $where_field.=" AND Application_No like '%" . $_POST['appNo'] . "%'";
+        $where_field.=" AND a.Application_No like '%" . $_POST['appNo'] . "%'";
     }
 }
 /* Make Where Clause */
 
-$where_field = " WHERE 1 and flag=5" . $where_field;
+$where_field = " WHERE 1 and a.flag = 5" . $where_field;
 ?>
+<script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
 <script>
-    function changeFlag(inputFlag, id) {
-        //Call Ajax
-        alert("CCCC" + inputFlag);
-        alert(id);
-
-        $("#button_Panel").load("ajax/change_Application_Status.php?flag=" + inputFlag + "&id=" + id, function(responseTxt, statusTxt, xhr) {
-            if (statusTxt == "success") {
-                alert(responseTxt);
-                document.getElementById("button_Panel").innerHTML = responseTxt;
-
-            } else if (statusTxt == "error") {
-                alert("Error: " + xhr.status + ": " + xhr.statusText);
-            }
-        });
+    function changeFlag(inputFlag, id){
+        
+        $("#button_Panel").load("ajax/change_Application_Status.php?flag="+inputFlag+"&id="+id,function(responseTxt,statusTxt,xhr){
+		  if(statusTxt=="success"){
+                        alert(responseTxt);
+			document.getElementById("button_Panel").innerHTML=responseTxt;
+			
+			}else if(statusTxt=="error"){
+				alert("Error: "+xhr.status+": "+xhr.statusText);
+			}
+	});
 
     }
 </script>
+
 <table cellpadding="0" cellspacing="0" width="100%" align="center" border="0" >	
     <tr>
         <td>
@@ -106,6 +111,7 @@ $where_field = " WHERE 1 and flag=5" . $where_field;
                                         <input class="form_button" type="submit" name="submit" value="Search">
                                     </td>
                                 <tr>
+                                    
                             </table>
                     </tr>
                 </form>
@@ -127,8 +133,7 @@ $where_field = " WHERE 1 and flag=5" . $where_field;
     $from=0;
     }
     $sql=q(" SELECT * FROM $table order by $sort_fieldname ");
-    //$sql=q(" SELECT * FROM dt_epin_request order by user_id desc ");
-
+   
     $rec_count=(int)nr($sql);
     ?>			
     <tr>
@@ -151,7 +156,7 @@ $where_field = " WHERE 1 and flag=5" . $where_field;
 
                 if($show_rec_per_page >= $rec_count)
                 {
-                $search_query = "SELECT * FROM $table ".$where_field." ORDER BY $sort_fieldname";
+                $search_query = "SELECT * FROM $table,$table2,$table3 ".$where_field." AND a.user_id=p.user_id AND a.user_id=u.user_id  ORDER BY $sort_fieldname";
                 }
                 else
                 {
@@ -165,7 +170,7 @@ $where_field = " WHERE 1 and flag=5" . $where_field;
                 $page_num = $page_count;		
                 }	
                 $from = ($page_num - 1) * $show_rec_per_page;
-                $search_query = "SELECT * FROM $table ".$where_field." ORDER BY $sort_fieldname limit $from, $show_rec_per_page";
+                $search_query = "SELECT * FROM $table,$table2,$table3 ".$where_field." AND a.user_id = p.user_id AND a.user_id = u.user_id ORDER BY $sort_fieldname limit $from, $show_rec_per_page";
 
                 }	
                 //echo $search_query;
@@ -179,7 +184,7 @@ $where_field = " WHERE 1 and flag=5" . $where_field;
                     <td width="2%" class="colhead">#</td>
                     <td width="10%" class="colhead"> Name </td>
                     <td width="5%" class="colhead">Mobile</td>	
-                    <td width="8%" class="colhead">Application Fee </td>		
+             		
                     <td width="8%" class="colhead">Roll-Index No</td>
                     <td width="8%" class="colhead">Pin</td>
                     <td width="8%" class="colhead">Application No</td>	
@@ -203,12 +208,13 @@ $where_field = " WHERE 1 and flag=5" . $where_field;
                 <tr bgcolor="#ffffff" onMouseOver=bgColor = "#EFF7FF" onMouseOut=bgColor = "#ffffff">
                     <td style="padding-left:5px;"><? echo $slno;?></td>
 
-                    <td style="padding-left:5px;"><?php echo stripslashes($f_arr['First_Name']) . " " . stripslashes($f_arr['Last_Name']); ?></td>
-                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['Gurdian_Mobile_No']);?></td>
-                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['Application_Fee']);?></td>
+                    <td style="padding-left:5px;"><?php echo stripslashes($f_arr['fname']) . " " . stripslashes($f_arr['lname']); ?></td>
+                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['mobile']);?></td>
+                   
                     <td style="padding-left:5px;"><?php
 $appNoTest = $f_arr['Application_No'];
-$fetch_app_no = mysql_fetch_array(mysql_query("select * from applicaion_marks where Application_No='" . $appNoTest . "' limit 1"));
+$user_id = $f_arr['user_id'];
+$fetch_app_no = mysql_fetch_array(mysql_query("select * from academic_details where User_id='" . $user_id . "' limit 1"));
 echo stripslashes($fetch_app_no['Roll_Index_No']);
 ?></td>
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['ZIP_PIN']);?></td>
@@ -221,15 +227,16 @@ if ($f_arr['flag'] == 1) {
     ?>
                             WAITING                              
 <?php } else if ($f_arr['flag'] == 2) { ?>
-                            <a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=9" onclick="return confirm('Want to Accept?');">Accept</a>
-
+                           <!-- <input type="button" id="submit_button" onclick="changeFlag(9,<?=$_REQUEST['id']?>)" value="ACCEPT APPLICATION" /> -->
+                            
+								<input type="button" id="submit_button" onclick="changeFlag(5,<?=$_REQUEST['id']?>)" value="CONIRM ADMISSION" />
                         <?php } else if ($f_arr['flag'] == 3) { ?>
                             RANKED
 
 
                         <?php } else if ($f_arr['flag'] == 4) { ?>
-
-                            <a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=5" onclick="return confirm('Want to Admit?');">CONFIRM ADMISSION</a>
+                            <input type="button" id="submit_button" onclick="changeFlag(5,<?=$_REQUEST['id']?>)" value="CONIRM ADMISSION" />
+                            
                         <?php }else if ($f_arr['flag'] == 8) { ?>
                                 DELETED
                         <?php } else if ($f_arr['flag'] == 9) { ?>
@@ -249,7 +256,7 @@ if ($f_arr['flag'] == 1) {
                         ?>
 
                     </td>
-                    <td align="center"><a href="view.php?action=view&id=<?php echo $f_arr['id']; ?>">View</a>
+                    <td align="center"><a href="../print_admission_confirmation.php?application_num=<? echo stripslashes($f_arr['Application_No']);?>" target="_blank">View</a>
                         
                     <?php if ($f_arr['flag'] != 8){ ?>
                         ||<a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=delete&id=<?php echo $f_arr['id']; ?>" onclick="return confirm('Cancel this Applicatiopn?');">Cancel</a>
@@ -312,11 +319,25 @@ if ($f_arr['flag'] == 1) {
                 </tr>  
                 <? }else{
                 $ERmsg="No record found!";
-                }?>   
+                 }?>   
+                <TR>
+                    
+                    <td colspan="10" align="center"><a href='../../classes/excelDownloader.php?MODE=SHOW_ADMITTED_STUDENT'>DOWNLOAD to Excel</a></td>
+                        
+                </TR>
+                
+                <TR>
+                    
+                    <td colspan="10" align="center"><a href='total_student_dashboard.php'>BACK</a></td>
+                        
+                </TR>
             </table>
+            
+            
         </td>
     </tr>
 </table>
+
 <script type="text/javascript">
     function generate_epin(user_id)
     {

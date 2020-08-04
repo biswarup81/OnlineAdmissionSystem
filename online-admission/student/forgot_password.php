@@ -6,35 +6,39 @@ $admin = new admin_class();
 
 $rowObj = $admin->getCollegeDetails();
 
-
 $action=$_REQUEST['action'];
-
-$match = false;
-$user_name = "";
-$password = "";
-if($action=='Forgot') {
-	$phone=stripslashes($_POST['phone']);
-	$application_no=stripslashes($_POST['application_no']);
-	$query = "SELECT * FROM application_table WHERE Application_No = '$application_no' and Gurdian_Mobile_No = '$phone' ";
-	//echo $query;
-	$result = mysql_query($query) or die(mysql_error());
-	if(mysql_num_rows($result) > 0){
-		while($row = mysql_fetch_array($result)){
-			$password = $row['password'];
-			
-			if($password == $pass){
-				$match = true;
-				
-				$user_name = $row['First_Name']." ".$row['Last_Name'];
-			}
-		}
-		$msg="<b>Your Password is ".$password."</b>. <a href='./login.php'>Login Now</a> ";
-	} else {
-		$msg="<b>Invalid username/password given</b>";
+if($action=='update'){
+	if(isset($_POST['email'])&&isset($_POST['otp'])&&isset($_POST['newpassword'])){
+		  
+   $email = stripslashes($_POST['email']);
+	$otp = stripslashes($_POST['otp']);
+	$newpassw = $_POST['newpassword'];
+	
+	$sql1 = "SELECT* FROM user WHERE email = '$email'";
+	$query1= mysql_query($sql1);
+	if(mysql_num_rows($query1) > 0){
+		$row = mysql_fetch_array($query1);
+		if($row['last_otp']==$otp){
+		$sql_update = "UPDATE user SET password ='".md5($newpassw)."' WHERE email = '$email'";
+		if(mysql_query($sql_update)){
+					echo "<script>alert('Password Update Successfull\\nLogin Now');
+                         window.location.href='../student/index.php';</script>";
+		}else{
+			//echo "<script>alert('Something Went Wrong\\nPlease Try Again!');</script>";
+			$msg = "<b>Something Went Wrong<br>Please Try Again!</b>";
+		  }
+        }else{
+			//echo "<script>alert('Entered a wrong OTP\\nPlease Try Again!');</script>";
+			$msg = "<b>Entered a wrong OTP<br>Please Try Again!</b>";
+   	    }
+	}else{	
+	    //echo "<script>alert('Email is not Registered');</script>";
+		$msg = "<b>Email is not Registered</b>";
 	}
-	
-	
+		  
+  }
 }
+
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -44,30 +48,18 @@ if($action=='Forgot') {
         <TITLE>Forget Password</TITLE>
 
         <META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
-        <SCRIPT language=JavaScript>
-            function checkthis()
-            {
-
-                if (document.f1.user.value == "")
-                {
-                    alert("Enter the mobile number / E-Mail");
-                    document.f1.user.focus();
-                    return false;
-                }
-                if (document.f1.pass.value == "")
-                {
-                    alert("Enter the password");
-                    document.f1.pass.focus();
-                    return false;
-                }
-
-            }
-        </SCRIPT>
+        
         <LINK href="style.css" type=text/css 
               rel=stylesheet>
         <META content="MSHTML 6.00.5700.6" name=GENERATOR>
+		<script type="text/javascript" src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
+    <meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+    <link type="text/css" href="../../jquery-ui-1.11.3/jquery-ui.css" rel="stylesheet"/>
+    <script src="../../jquery-ui-1.11.3/jquery-ui.js"></script>
+    <script src="../../jquery-validation-1.13.1/dist/jquery.validate.js"></script>
     </HEAD>
-    <BODY onLoad="javascript:document.f1.user.focus();">
+    <BODY>
         <table height="100%" cellSpacing=0 cellPadding=4 width="70%" align="center"  border="0">    
             <tr><td>&nbsp;</td></tr>
             <TR>
@@ -108,9 +100,9 @@ if($action=='Forgot') {
                                             <TABLE  cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
                                                 <TR vAlign=top>
                                                     <TD>
-                                                        <FORM name="f1" onSubmit="return checkthis()" action="forgot_password.php?action=Forgot" method="post">
+                                                        <div>
                                                             <TABLE borderColor=#000000 cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
-                                                                <? if($msg<>''){ ?>
+                                                              <? if($msg<>''){ ?>
                                                                 <TR>
                                                                     <TD valign="top" colspan="4" style="font-family:verdana; font-size:11px; color:#FF0000; padding-left:25px;">
                                                                         <?= $msg ?>	
@@ -118,23 +110,16 @@ if($action=='Forgot') {
                                                                 </TR>
                                                                 <? } ?>
                                                                 <TR>
-                                                                    <TD vAlign=top>&nbsp;</TD>
-                                                                    <TD vAlign=top width="30%" height=25>&nbsp;</TD>
-                                                                    <TD vAlign=top width="2%">&nbsp;</TD>
-                                                                    <TD vAlign=top width="61%">&nbsp;</TD>
-                                                                </TR>
-                                                                <TR>
                                                                     <TD vAlign=center align=middle>&nbsp;</TD>
-                                                                    <TD vAlign=center align=right height=25>Phone Number:</TD>
+                                                                    <TD vAlign=center align=right height=25>Email ID</TD>
                                                                     <TD vAlign=center align=left>&nbsp;</TD>
-                                                                    <TD vAlign=center align=left><INPUT size=25 name="phone" autocomplete="off"></TD>
+                                                                    <TD vAlign=center align=left><INPUT type="email" id="email" size=25 name="email"></TD>
                                                                 </TR>
-                                                                
-                                                                <TR>
+																<TR>
                                                                     <TD vAlign=center align=middle>&nbsp;</TD>
-                                                                    <TD vAlign=center align=right height=25>Application Number</TD>
+                                                                    <TD vAlign=center align=right height=25></TD>
                                                                     <TD vAlign=center align=left>&nbsp;</TD>
-                                                                    <TD vAlign=center align=left><INPUT type="text"  size=25 name="application_no"></TD>
+                                                                    <TD vAlign=center align=left><div id="otpmsg"></TD>
                                                                 </TR>
                                                                 <TR>
                                                                     
@@ -142,14 +127,14 @@ if($action=='Forgot') {
                                                                         <TABLE borderColor=#000000 cellSpacing=0 cellPadding=0 width="100%" border=0>
                                                                             <TR>
                                                                                 
-                                                                                <TD align=right><INPUT type="submit" value="Forgot Password" name="Forgot"></TD>
+                                                                                <TD align=right><Button type="submit" id="resendOTP" onclick="sendOTP()" name="Forgot">Send Request</Button></TD>
                                                                                 
                                                                             </TR>
                                                                         </TABLE>
                                                                     </TD>
                                                                 </TR>
                                                             </TABLE>
-                                                        </FORM>
+                                                        </div>
                                                     </TD>
                                                 </TR>
                                             </TABLE>
@@ -163,5 +148,25 @@ if($action=='Forgot') {
             </TR>
             <tr><td>&nbsp;</td></tr>
         </TABLE>
+		<script type="text/javascript">
+		
+	function sendOTP(){
+	 //document.getElementById("resendOTP").innerHTML = "OTP Sent successfully";	
+	 //$("#principal_desk").addClass("section clearfix about-principal-voice krk-bg-light box-shadow");
+	 //$("#principal_desk").load("./ajax/resendOTP?page_id=14");
+     var email = document.getElementById("email").value;
+	 if (email == null || email == "") {
+         //txt = "Please enter your email";
+		 $("#email").focus();
+		 document.getElementById("otpmsg").innerHTML = "Please enter your email";
+       } else {
+		 document.getElementById("otpmsg").innerHTML = "Sending OTP...";  
+		 $("#otpmsg").load("../ajax/forgot_pass_resendOTP.php?email="+email);  
+	     //document.getElementById("demo").innerHTML = "Loading...";
+	   }
+	 
+	 
+	};
+</script>
     </BODY>
 </HTML>

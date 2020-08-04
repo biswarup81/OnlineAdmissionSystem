@@ -12,7 +12,7 @@ if ($_SESSION['user_type']=="" || !isset($_SESSION['user_type']) || !isset($_SES
 <head>
 <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Welcome to Kandra RKK Mahavidyalaya : Administration Panel</title>
+<title>Welcome to Kandra RKK Mahavidyalaya : Student Panel</title>
 <link rel="stylesheet"  href="jscal/skins/aqua/theme.css" type="text/css" />
 <link rel="stylesheet" href="../css/modal-message.css" type="text/css">
 <link rel="stylesheet"  href="jscal/skins/aqua/theme.css" type="text/css" />
@@ -30,7 +30,10 @@ if ($_SESSION['user_type']=="" || !isset($_SESSION['user_type']) || !isset($_SES
 
 <script type="text/javascript">AC_FL_RunContent = 0;</script>
 <script src="../Scripts/AC_RunActiveContent.js" type="text/javascript"></script>
-<script src="../../js/online_admission.js" type="text/javascript"></script>
+<script src="../js/my-applications.js" type="text/javascript"></script>
+<?php
+require "./inc/link_styles_js.php";
+?>
 
 <script language="javascript">
 var XMLHttpRequestObject = false;
@@ -815,13 +818,13 @@ XMLHttpRequestObject.send(null);
 			</span>
         </TD>
     </TR>
-    <TR><TD><?php echo $_SESSION['user_name']; ?></TD></TR>
+    <TR><TD><?php echo "NAME: ".$_SESSION['user_name']." #USER ID: ".$_SESSION['user_id']; ?></TD></TR>
 </TABLE>
 		  
 <table align="center" width="100%" class="borderall">
     <tr>
         <td align="left" width="18%" valign="top" class="borderR" style="background:#589EE2;">
-        <? 
+        <?php 
         require_once "menu.php";
         ?>
         </td>

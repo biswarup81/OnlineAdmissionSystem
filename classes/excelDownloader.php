@@ -66,11 +66,19 @@ if(isset($_GET["MODE"])){
     $mode = $_GET["MODE"];
     
     if($mode == "SHOW_ALL_STUDENT"){
-        $query = "select a.First_Name,a.Middle_Name,a.Last_Name, a.Application_No, b.Course_Level_Name, c.Course_Name,
-            d.FLAG_NAME, a.Gurdian_Mobile_No, a.Gender,a.Category,a.Physically_Challenged,
-            a.email,a.Total_Marks 
-	    from application_table a, course_level b, course_table c, admission_flag d
-	    where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and d.FLAG_ID = a.flag ";
+        $query = "select u.fname,u.mname,u.lname, a.Application_No, b.Course_Level_Name, c.Course_Name,
+            d.FLAG_NAME, u.mobile, u.Gender,p.Category,p.Physically_Challenged,
+            u.email,a.Total_Marks 
+	    from application_table a,personal_details p, user u, course_level b, course_table c, admission_flag d
+	    where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and d.FLAG_ID = a.flag AND a.user_id = p.user_id AND a.user_id = u.user_id";
+        $result = mysql_query($query) or die(mysql_error());
+        csvToExcelDownloadFromResult($result);
+    }else if($mode == "SHOW_ADMITTED_STUDENT"){
+        $query = "select u.fname,u.mname,u.lname, a.Application_No, b.Course_Level_Name, c.Course_Name,
+            d.FLAG_NAME, u.mobile, u.Gender,p.Category,p.Physically_Challenged,
+            u.email,a.Total_Marks
+	    from application_table a,personal_details p, user u, course_level b, course_table c, admission_flag d
+	    where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and d.FLAG_ID = a.flag and a.flag=5 AND a.user_id = p.user_id AND a.user_id = u.user_id";
         $result = mysql_query($query) or die(mysql_error());
         csvToExcelDownloadFromResult($result);
     } else if($mode == "SHOW_RANK"){
@@ -89,14 +97,14 @@ if(isset($_GET["MODE"])){
 				order by a.Total_Marks desc "; */
 	    	
 	    	
-	    	$query = "select @rownum := @rownum +1 'Rank', concat (a.First_Name , ' ', a.Last_Name) as Name, a.Application_No, concat (b.Course_Level_Name, '(', c.Course_Name,')') as Course
+	    	$query = "select @rownum := @rownum +1 'Rank', concat (u.fname , ' ', u.lname) as Name, a.Application_No, concat (b.Course_Level_Name, '(', c.Course_Name,')') as Course
 	           ,a.Total_Marks
-		    from application_table a, course_level b, course_table c, admission_flag d, application_rank_status ars, (
+		    from application_table a, personal_details p, user u,course_level b, course_table c, admission_flag d, application_rank_status ars, (
 				
 				SELECT @rownum :=0
 				)e
 		    where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and d.FLAG_ID = a.flag and a.application_no = ars.application_no
-			and a.flag=3 and c.CourseId = $course_id and b.Course_Level_Id = $course_level_id and ars.rank_category	 = '$category'
+			and a.flag=3 and c.CourseId = $course_id and b.Course_Level_Id = $course_level_id and ars.rank_category	 = '$category' AND a.user_id = p.user_id AND a.user_id = u.user_id
 				order by a.Total_Marks desc ";
 	    	
     	} else {
@@ -107,18 +115,19 @@ if(isset($_GET["MODE"])){
     		and a.flag=3 and c.CourseId = $course_id and b.Course_Level_Id = $course_level_id and a.category	 = '$category'
     		order by a.Total_Marks desc ";
     		*/
-    		$query ="SELECT @rownum := @rownum +1 'Rank', CONCAT( a.First_Name,  ' ', a.Last_Name ) AS Name, a.Application_No, CONCAT( b.Course_Level_Name,  '(', c.Course_Name,  ')' ) AS Course, a.Total_Marks
-				FROM application_table a, course_level b, course_table c, admission_flag d, (
+    		$query ="SELECT @rownum := @rownum +1 'Rank', CONCAT( u.fname,  ' ', u.lname ) AS Name, a.Application_No, CONCAT( b.Course_Level_Name,  '(', c.Course_Name,  ')' ) AS Course, a.Total_Marks
+				FROM application_table a,personal_details p,user u, course_level b, course_table c, admission_flag d, (
 				
 				SELECT @rownum :=0
 				)e
 				WHERE a.course_level_id = b.Course_Level_Id
+				AND a.user_id = p.user_id AND a.user_id = u.user_id
 				AND a.course_id = c.courseId
 				AND d.FLAG_ID = a.flag
 				AND a.flag =3
 				AND c.CourseId = $course_id
 				AND b.Course_Level_Id = $course_level_id
-				AND a.category =  '$category'
+				AND p.category =  '$category'
 				ORDER BY a.Total_Marks DESC" ;
     		
     		/*$query = "select a.First_Name,a.Middle_Name,a.Last_Name, a.Application_No, b.Course_Level_Name, c.Course_Name,

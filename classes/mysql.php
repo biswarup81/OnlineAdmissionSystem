@@ -1,4 +1,4 @@
-<?
+<?php
  $connected = false;
  function c()
   {

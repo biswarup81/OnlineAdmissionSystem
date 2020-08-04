@@ -17,7 +17,7 @@ $branch_accounts = $admin->getConstant("BRANCH_ACCOUNT");
 <div align="justify" >
 <h3>1. Form Fill-up</h3><hr />
 <ul>
-<li>Open online admission form by clicking the link in College Website website.</li>
+<li>Open online admission form by clicking the link in College Website.</li>
 </li>Fill up all the field and submit the form. </li>
 <li>Applicant will receive a mail and SMS with submission of form.  They will get password to enter into the student panel. </li>
 <li>Applicant pays the Application Fee directly to the bank. After depositing the application fee, student has to confirm the application.</li>
@@ -27,7 +27,7 @@ $branch_accounts = $admin->getConstant("BRANCH_ACCOUNT");
 <p style="color:rgb(219, 14, 14);">NOTE: Application once submitted cannot be changed.  In case of any error, Student has to cancel the submitted form and submit a fresh form. Cancellation is possible in every stage of Admission.</p>
 <h3>2. Rank Generation and Admission </h3><hr />
 <ul>
-<li>Once the rank is generated, all the eligible students will get a mail to take admission online from student login panel.</li>
+<li>Once the rank is generated, all the eligible students will get a Mail / SMS to take admission online from student login panel.</li>
 <li>A student then logs into the panel and accept the admission by clicking the confirm button.</li>
 <li>Student , then  deposit the admission fee to the bank.  Check different fee structure from student panel.</li>
 <li>Students are directed to bring the following documents in original at the time of admission to the college on the date given in the notice board, after depositing the admission fee to the Bank. </li>

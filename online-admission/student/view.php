@@ -4,16 +4,19 @@ include"header.php";
 include "../../classes/admin_class.php";
 
 $admin = new admin_class();
+
+$user_id = $_SESSION['user_id'];
 ?>
 
 <?php
 if($_REQUEST['action']=='view'){
    
-        
         $id = $_REQUEST[id];
 //print_r($details);
 ?>
 <script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="popup.css">
 <script>
 
 
@@ -38,6 +41,7 @@ function changeUserFlag(inputFlag, id){
 <?php
     $admin = new admin_class();
     $details=$admin->getApplicationDetailsById($id);
+	//$imagelinks=$admin->getAppAttachmentDetails($user_id);
 ?>
 
  <center>
@@ -59,7 +63,7 @@ function changeUserFlag(inputFlag, id){
 
 		<td width="25%" class="sTD">Name</td>
 
-		<td width="30%" class="sTD"><?php echo $details->First_Name. ' '.$details->Last_Name; ?></td>
+		<td width="30%" class="sTD"><?php echo $details->fname. ' '.$details->lname; ?></td>
                 <td class="sTD">Mobile Number</td>
 
 		<td class="sTD"> <?php echo $details->Gurdian_Mobile_No ; ?></td>
@@ -144,9 +148,64 @@ function changeUserFlag(inputFlag, id){
 
       <td colspan="3"><?php echo $details->email; ?></td>
 	  </tr>
-    
-    
-    
+      <tr>
+      <td>Date of birth proof </td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?= base64_encode(file_get_contents('../pg/ulasset/'.$admin->getAppAttachmentDetails($user_id, 1))) ?>" alt=""/></span></a></i></td>
+	 
+	  </tr>
+	  <?php
+	  if(!empty($admin->getAppAttachmentDetails($user_id, 5))){
+	  ?>
+	   <tr>
+      <td>Caste Certificate </td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?=base64_encode(file_get_contents('../pg/ulasset/'.$admin->getAppAttachmentDetails($user_id, 5))) ?>" alt=""/></span></a></i></td>
+	  </tr>
+	   <?php
+
+	   }
+	   ?>
+	   <?php
+	  if(!empty($admin->getAppAttachmentDetails($user_id, 8))){
+	  ?>
+	  <tr>
+      <td>Disability Certificate </td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?=base64_encode(file_get_contents('../pg/ulasset/'.$admin->getAppAttachmentDetails($user_id, 8))) ?>" alt=""/></span></a></i></td>
+	  </tr>
+	  <?php
+	   }
+	   ?>
+	  <tr>
+      <td>10<sup>th</sup> Marksheet </td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?=base64_encode(file_get_contents('../pg/ulasset/'.$admin->getAppAttachmentDetails($user_id, 3))) ?>" alt=""/></span></a></i></td>
+	  </tr>
+	  <tr>
+      <td>12<sup>th</sup> Marksheet </td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?=base64_encode(file_get_contents('../pg/ulasset/'.$admin->getAppAttachmentDetails($user_id, 4))) ?>" alt=""/></span></a></i></td>
+	  </tr>
+              <?php
+          $flag_val=$details->flag;
+          $apl_challan= $admin->getApplAdmChallanDetails($details->Application_No, 6);
+          if(($flag_val==2|| $flag_val==3 || $flag_val==4||$flag_val==5) && strlen($apl_challan->doc_name) != 0){
+    //  echo $admin->getApplAdmChallanDetails($details->Application_No, 7);
+          ?>
+          <tr>
+      <td>Application Challan Scan Copy</td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?=base64_encode(file_get_contents('../pg/ulasset/'.$apl_challan->doc_name)) ?>" alt=""/></span></a></i></td>
+          </tr>
+       <?php }?>
+	  <?php
+	 // $flag_val=$details->flag;
+          $adm_challan= $admin->getApplAdmChallanDetails($details->Application_No, 7);
+	  if(($flag_val==3 || $flag_val==4||$flag_val==5) && strlen($adm_challan->doc_name) != 0){
+    //  echo $admin->getApplAdmChallanDetails($details->Application_No, 7);
+	  ?>
+	  <tr>
+      <td>Admisson Challan Scan Copy</td>
+      <td colspan="3">&emsp;<a class="thumb" href="#"><img src="images/imgicon.png" alt=""/><span><img src="data:image/png;base64,<?=base64_encode(file_get_contents('../pg/ulasset/'.$adm_challan->doc_name)) ?>" alt=""/></span></a></i></td>
+	  </tr>
+	  <?php
+	  }
+	  ?>
     <tr>
                  
       <td align="center" colspan="4">
@@ -165,7 +224,7 @@ function changeUserFlag(inputFlag, id){
             </tr>
  <?php $appNo=$details->Application_No;
  $query2 = "SELECT b.Subject_Name, a.Marks_Obtained, a.Full_Marks, a.Pass_Fail_Remarks, a.Board, a.Roll_Index_No, a.Year_of_Passing"
-                . " FROM applicaion_marks a, subject_master b WHERE a.`Application_No`='$appNo' and a.subject = b.subject_Id";
+                . " FROM academic_details a, subject_master b WHERE a.`User_id`='$user_id' and a.subject = b.subject_Id";
        
          $marksQuery1=mysql_query($query2) or die(mysql_error());
 
@@ -199,11 +258,13 @@ function changeUserFlag(inputFlag, id){
                       //Flag 1 - DRAFT
                       if($details->flag == 1){  ?>
                       
-                      <p>Request you to pay the Application Fee of <?php echo $admin->getConstant("APPLICATION_FEE") ?> to <?php echo $admin->getConstant("BANK_NAME") ?> <?php echo $admin->getConstant("BRANCH_ACCOUNT") ?></p>
-                      <input type="button" id="submit_button" onclick="changeUserFlag(2,<?=$details->id?>)" value="CONFIRM APPLICATION" />
+                      <p>Request you to pay the Application Fee of <?php echo $admin->getConstant("APPLICATION_FEE") ?> to <?php echo $admin->getConstant("BANK_NAME") ?> <?php echo $admin->getConstant("BRANCH_ACCOUNT") ?> <br/>OR Use our Mobile Application to Pay the Application fee.</p>
+                  <!--    <input type="button" id="submit_button" onclick="changeUserFlag(2,<?=$details->id?>)" value="CONFIRM APPLICATION" />-->
                       <?php } else if($details->flag == 2){ 
                      
-                        echo "Thank you for Submitting your Application for Chandidas College. Kindly wait for the Merit List for result.";
+                        echo "Thank you for Submitting your Application. Kindly wait for Admin approval.";
+                     }else if($details->flag == 9){ 
+							echo "Thank you for Submitting your Application. Kindly wait for the Merit List for result.";
                      } else if($details->flag == 3){ 
                       $admissionFee = $admin->getApplicationFeeByCourseIdAndCourseLevelId($details->course_id, $details->course_level_id); ?>
                       <p>Request you to pay the Admission Fee for Rs. 

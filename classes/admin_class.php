@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,12 +14,13 @@
 class admin_class {
     function sendMail($inputId, $flag,$mprnt, $application_no, $Password,$email){
         //echo "inside send mail";
+		$send  = new sendMail();
         $admin = new admin_class();
         $collObj = $admin->getCollegeDetails();
         $studentLogin = $admin->getConstant("STUDENT_LOGIN");
         $from_mail = $admin->getConstant("FROM_MAIL");
         if($flag == 1){
-            echo "inside 1";
+           // echo "inside 1";
             //Send mail to Student that his form has been submitted.
             $toMail = $email;
 			
@@ -27,9 +28,9 @@ class admin_class {
             $body = $admin->prepareMailBodyfor1stSubmission($application_no);
 
             //echo $body;
-            $header = $admin->prepareHeader();
+            //$header = $admin->prepareHeader();
             
-            if(mail($toMail,$subject,$body,$header)){
+            if($send->MailMe($toMail,$subject,$body)){
                     $result = "Your application form has been submitted successfully....";
                     "Application No:".$application_no;
                     $application_no_id=trim($application_no);
@@ -138,7 +139,7 @@ class admin_class {
     	$result = "";
     	$admin = new admin_class();
     	
-    	$query1 = "select a.Gurdian_Mobile_No, concat(b.Course_Level_Name, ' - ', c.Course_Name) as course, a.course_id, a.course_level_id, a.id, a.application_no, a.password, a.Gurdian_Mobile_No  
+    	$query1 = "select a.Gurdian_Mobile_No, concat(b.Course_Level_Name, ' - ', c.Course_Name) as course, a.course_id, a.course_level_id, a.id, a.application_no, a.Gurdian_Mobile_No  
 				from application_table a
 				left join session_table s on a.Session_id = s.sessionid
 				left join course_level b on a.course_level_id = b.course_level_id
@@ -238,7 +239,7 @@ class admin_class {
     	mysql_query("update application_table set flag = 12 where flag=3 and course_level_id = $courselevelid and course_id = $courseid ") or die (mysql_error());
     	
     	$query1 = "select a.Course_Id, a.Course_Level_Id
-					, (Total_Seat - (SC+ ST+ OBC_A+ OBC_B) - SUM(case when e.flag in (4,5) and f.rank_category = 'GEN' then 1 else 0 end) ) as OTHAAV
+					, (Total_Seat - (SC+ ST+ OBC_A+ OBC_B) - SUM(case when e.flag in (5) and f.rank_category = 'GEN' then 1 else 0 end) ) as OTHAAV
 					, SC - SUM(case when e.flag in (4,5) and f.rank_category = 'SC' then 1 else 0 end) as SCAV
 					, ST - SUM(case when e.flag in (4,5) and f.rank_category = 'ST' then 1 else 0 end) as STAV
 					, OBC_A - SUM(case when e.flag in (4,5) and f.rank_category = 'OBC-A' then 1 else 0 end) as 'OBC_AAV'
@@ -248,7 +249,7 @@ class admin_class {
 					left join course_level c on a.course_level_id = c.course_level_id
 					left join course_table d on a.course_id = d.courseid
 					left outer join application_table e on a.Session_id = e.session_id and a.course_level_id = e.course_level_id and a.course_id = e.course_id
-					left outer join application_rank_status f on e.application_no = f.application_no
+					left outer join application_rank_status f on e.application_no = f.application_no and f.admit_flag = 1
 					group by b.session_name, c.course_level_name, d.course_name, a.Total_Seat, (a.Total_Seat - a.SC - a.ST - a.OBC_A - a.OBC_B), a.SC, a.ST, a.OBC_A, a.OBC_B 
 					having a.Course_Id = $courseid and a.Course_Level_Id = $courselevelid";
     	
@@ -290,27 +291,31 @@ class admin_class {
         
         if($category == "GEN"){
             
-                $query2 = "SELECT a.Application_No, a.First_Name, a.Last_Name, a.Gurdian_Mobile_No, a.email, a.password, 
-                            a.submit_date, d.flag_name, b.Course_Level_Name, c.Course_Name, a.total_marks, a.category
-                            FROM application_table a, course_level b, course_table c, admission_flag d
+    $query2 = "SELECT a.Application_No, u.fname  First_Name, u.lname Last_Name, p.Gurdian_Mobile_No, u.email, u.password,
+                            a.submit_date, d.flag_name, b.Course_Level_Name, c.Course_Name, a.total_marks, p.Category category
+                            FROM application_table a, personal_details p, user u, course_level b, course_table c, admission_flag d
                             WHERE a.course_level_id = b.Course_Level_Id
                             AND a.course_id = c.courseId
+                            AND a.user_id = p.user_id
+                            AND a.user_id = u.user_id
                             AND d.FLAG_ID = a.flag "
-                        . " AND a.course_id = '$courseid'  "
-                    . " AND a.course_level_id = '$courselevelid' and a.flag = '9'"
-                    . "order by a.Total_Marks desc limit 0, $input_num";
+                           . " AND a.course_id = '$courseid'  "
+                           . " AND a.course_level_id = '$courselevelid' and a.flag = '9'"
+                           . "order by a.Total_Marks desc limit 0, $input_num";
             //echo "GENERAL -> ".$query2;
         } else {
-        $query2 = "SELECT a.Application_No, a.First_Name, a.Last_Name, a.Gurdian_Mobile_No, a.email, a.password, 
-                            a.submit_date, d.flag_name, b.Course_Level_Name, c.Course_Name, a.total_marks, a.category
-                            FROM application_table a, course_level b, course_table c, admission_flag d
+        $query2 = "SELECT a.Application_No, u.fname  First_Name, u.lname Last_Name, p.Gurdian_Mobile_No, u.email, u.password,
+                            a.submit_date, d.flag_name, b.Course_Level_Name, c.Course_Name, a.total_marks, p.Category category
+                            FROM application_table a, personal_details p, user u, course_level b, course_table c, admission_flag d
                             WHERE a.course_level_id = b.Course_Level_Id
+                            AND a.user_id = p.user_id
+                            AND a.user_id = u.user_id
                             AND a.course_id = c.courseId
                             AND d.FLAG_ID = a.flag "
-                . " and a.course_id = '$courseid' and "
-                . "a.course_level_id = '$courselevelid' and a.category = '$category' and a.flag in ( '9', '3') "
-                . "order by a.Total_Marks desc limit 0, $input_num";
-                //echo "RESERVATIONS -> ".$query2;
+                           . " and a.course_id = '$courseid' and "
+                           . "a.course_level_id = '$courselevelid' and p.Category = '$category' and a.flag in ( '9', '3') "
+                           . "order by a.Total_Marks desc limit 0, $input_num";
+                           //echo "RESERVATIONS -> ".$query2;
         }
         //echo $query2;
         $admin = new admin_class();
@@ -402,7 +407,6 @@ class admin_class {
             <h2> Application Num # $application_no</h2>
             <p>Your Application for $rowObj->Course_Level_Name  (' $rowObj->Course_Name  ') has been submitted successfully. Kindly logon to the Online Admission System with the following URL :</p>
             <p><a href='".$studentLogin."' target='_blank'>".$studentLogin."</a></p>
-            <p>ID : Use your E-Mail ID or Mobile Numberand password : $rowObj->password (Change your password from the panel)</p>
             <h2>Instructions</h2>
             <p><strong>STEP 1</strong>: Deposite Application Fee of ".$admin ->getConstant('APPLICATION_FEE')." to ".$admin ->getConstant('BANK_NAME')." in the following Branchs. </p>
             <p>".$admin ->getConstant('BRANCH_ACCOUNT')."</p>
@@ -537,17 +541,17 @@ class admin_class {
    function getApplicationDetails($application_no){
        //$subjectCombination = "";
        
-       $query = "select a.id,a.Application_No,a.password,a.Application_Fee,
-        a.Demand_Draft_No,a.First_Name,a.Middle_Name,a.Last_Name,a.Gurdian_Name,a.Gurdian_Mobile_No,a.Gurdian_Relation,
-        a.Other_Relation,a.occu,a.other_occu,a.desi,a.income,a.Gender,a.Date_Of_Birth,
-        a.Category,a.Physically_Challenged,a.Religion,a.other_religion,a.Nationality,
-        a.Address,a.ZIP_PIN,a.Address_1,a.pin2,a.Address_2,a.Country,a.Mobile,a.Land_Phone_No,
-        a.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
-        a.course_level_id,a.session_id,a.submit_date,a.flag,a.state, e.name as state_name, a.district,f.name as district_name,  
-        b.Course_Level_Name, c.Course_Name
-	from application_table a, course_level b, course_table c, admission_flag d, states e, districts f 
-	where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and a.state = e.id and a.district = f.id  
-        and d.FLAG_ID=a.flag and  a.Application_No='".$application_no."'";
+       $query = "select a.id,a.Application_No,a.Application_Fee,a.Admission_Fee, a.user_id,
+        a.Demand_Draft_No,h.fname,h.mname,h.lname,h.mobile,g.Gurdian_Name,g.Gurdian_Mobile_No,g.Gurdian_Relation,
+        g.Other_Relation,g.occu,g.other_occu,g.desi,g.income,h.Gender,g.Date_Of_Birth,
+       g.Category,g.Physically_Challenged,g.Religion,g.other_religion,g.Nationality,
+        g.Address,g.ZIP_PIN,g.Address_1,g.pin2,g.Address_2,g.Country,g.Mobile,g.Land_Phone_No,
+        h.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
+        a.course_level_id,a.session_id,a.submit_date,a.flag,g.state, e.name as state_name, g.district,f.name as district_name,  
+        b.Course_Level_Name, c.Course_Name,a.Doc_verified
+	from application_table a, course_level b, course_table c, admission_flag d, states e, districts f , personal_details g,user h
+	where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and g.state = e.id and g.district = f.id  
+        and d.FLAG_ID=a.flag and g.user_id = a.user_id and h.user_id=a.user_id and a.Application_No='".$application_no."' ";
        
        //echo $query;
        
@@ -601,18 +605,17 @@ class admin_class {
    function getApplicationDetailsById($id){
        //$subjectCombination = "";
        
-       $query = "select a.id,a.Application_No,a.password,a.Application_Fee,
-        a.Demand_Draft_No,a.First_Name,a.Middle_Name,a.Last_Name,a.Gurdian_Name,
-        a.Gurdian_Mobile_No,a.Gurdian_Relation,
-        a.Other_Relation,a.occu,a.other_occu,a.desi,a.income,a.Gender,a.Date_Of_Birth,
-        a.Category,a.Physically_Challenged,a.Religion,a.other_religion,a.Nationality,
-        a.Address,a.ZIP_PIN,a.Address_1,a.pin2,a.Address_2,a.Country,a.Mobile,a.Land_Phone_No,
-        a.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
-        a.course_level_id,a.session_id,a.submit_date,a.flag,a.state,a.district, 
-        b.Course_Level_Name, c.Course_Name
-	from application_table a, course_level b, course_table c, admission_flag d 
-	where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId 
-        and d.FLAG_ID=a.flag and  a.id='".$id."'";
+       $query = "select a.id,a.Application_No,a.user_id,
+        a.Demand_Draft_No,h.fname,h.mname,h.lname,h.mobile,g.Gurdian_Name,g.Gurdian_Mobile_No,g.Gurdian_Relation,
+        g.Other_Relation,g.occu,g.other_occu,g.desi,g.income,h.Gender,g.Date_Of_Birth,
+       g.Category,g.Physically_Challenged,g.Religion,g.other_religion,g.Nationality,
+        g.Address,g.ZIP_PIN,g.Address_1,g.pin2,g.Address_2,g.Country,g.Mobile,g.Land_Phone_No,
+        h.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
+        a.course_level_id,a.session_id,a.submit_date,a.flag,g.state, e.name as state_name, g.district,f.name as district_name,  
+        b.Course_Level_Name, c.Course_Name,a.Doc_verified
+	from application_table a, course_level b, course_table c, admission_flag d, states e, districts f , personal_details g,user h
+	where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId and g.state = e.id and g.district = f.id  
+        and d.FLAG_ID=a.flag and g.user_id = a.user_id and h.user_id=a.user_id and a.id='".$id."'";
        
        //echo $query;
        
@@ -718,7 +721,7 @@ class admin_class {
 	   	
 	   	mysql_query($insert_query) or die(mysql_error());
 	   	
-	   	echo "Query executed";
+	   //	echo "Query executed";
 	   	
    }
    function sendSMS($message, $mobile_num){
@@ -757,11 +760,11 @@ class admin_class {
    }
    
    function sendSMSByApplicationId($flag,$id){
-       echo ("id ==>"+$id);
+       //echo ("id ==>"+$id);
        $admin =new admin_class();
        $rowObj = $admin->getApplicationDetailsById($id);
        $application_no = $rowObj->Application_No;
-       $mobile_num=$rowObj->Gurdian_Mobile_No;
+       $mobile_num=$rowObj->mobile;
        $password = $rowObj->password;
        $courlevel = $rowObj->Course_Level_Name;
        $coursename = $rowObj->Course_Name;
@@ -798,27 +801,28 @@ class admin_class {
    
    function retrieveForms(){
        $sql = "SELECT SUM(
-        CASE WHEN a.Category = 'GEN'
+        CASE WHEN b.Category = 'GEN'
         THEN 1
         ELSE 0
         END ) AS GEN, SUM(
-        CASE WHEN a.Category = 'SC'
+        CASE WHEN b.Category = 'SC'
         THEN 1
         ELSE 0
         END ) AS SC, SUM(
-        CASE WHEN a.Category = 'ST'
+        CASE WHEN b.Category = 'ST'
         THEN 1
         ELSE 0
         END ) AS ST, SUM(
-        CASE WHEN a.Category = 'OBC-A'
+        CASE WHEN b.Category = 'OBC-A'
         THEN 1
         ELSE 0
         END ) AS 'OBC-A', SUM(
-        CASE WHEN a.Category = 'OBC-B'
+        CASE WHEN b.Category = 'OBC-B'
         THEN 1
         ELSE 0
         END ) AS 'OBC-B', session_table.session_name, course_level.course_level_name, course_table.course_name
         FROM application_table a
+        LEFT JOIN personal_details b ON a.user_id = b.user_id
         LEFT JOIN session_table ON a.session_id = session_table.sessionid
         LEFT JOIN course_level ON a.course_level_id = course_level.course_level_id
         LEFT OUTER JOIN course_table ON a.course_id = course_table.courseid
@@ -845,12 +849,12 @@ class admin_class {
 	$db_login= 'onlinead_kandra';
 	$db_pswd = '#x9I@V1RBNhu';
 	$db_name = 'onlinead_kandra';
-      $con = mysqli_connect($db_host,$db_login,$db_pswd);
+      $con = mysql_connect($db_host,$db_login,$db_pswd);
       if (!$con)
       {
       die('Could not connect: ' . mysql_error());
       }
-      mysqli_select_db($con,$db_host);
+      mysql_select_db($db_host);
       return $con;
    }
    function getKanyaShreeDetails($applicationNum){
@@ -988,4 +992,21 @@ class admin_class {
    	return $rowObj;
    	
    }
+   function getAppAttachmentDetails($user_id, $img_id){
+   	$query = "select `image` from  `gallery_image` where user_id = '$user_id' AND gallery_id = '$img_id' and 	is_deleted = 'N' ";
+   	$result = mysql_query($query) or die(mysql_error());
+   	$row = mysql_fetch_array($result);
+   	return $row['image'];
+   }
+
+    function getApplAdmChallanDetails($application_num, $img_id){
+        $query = "select `doc_name`, `is_verified`  from  `offline_payments` where app_no = '$application_num' AND gallery_id = '$img_id' ";
+        $result = mysql_query($query) or die(mysql_error());
+        $rowObj = mysql_fetch_object($result);
+
+        return $rowObj;
+
+   }
+
+
 }

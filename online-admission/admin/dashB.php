@@ -18,17 +18,17 @@ $where_field.='';
 $where_field=" WHERE 1 and c.Course_Level_Id=cl.Course_Level_Id and c.Course_Id=ct.CourseId ".$where_field;
 
 $query = "select b.session_name, c.course_level_name, d.course_name, a.Total_Seat, (a.Total_Seat - a.SC - a.ST - a.OBC_A - a.OBC_B) as General, a.SC, a.ST, a.OBC_A, a.OBC_B
-, SUM(case when e.flag in (4,5) and f.rank_category = 'GEN' then 1 else 0 end) as GEN_Filled
-, SUM(case when e.flag in (4,5) and f.rank_category = 'SC' then 1 else 0 end) as SC_Filled
-, SUM(case when e.flag in (4,5) and f.rank_category = 'ST' then 1 else 0 end) as ST_Filled
-, SUM(case when e.flag in (4,5) and f.rank_category = 'OBC-A' then 1 else 0 end) as 'OBC_A_Filled'
-, SUM(case when e.flag in (4,5) and f.rank_category = 'OBC-B' then 1 else 0 end) as 'OBC_B_Filled'
+, SUM(case when e.flag in (5) and f.rank_category = 'GEN' then 1 else 0 end) as GEN_Filled
+, SUM(case when e.flag in (5) and f.rank_category = 'SC' then 1 else 0 end) as SC_Filled
+, SUM(case when e.flag in (5) and f.rank_category = 'ST' then 1 else 0 end) as ST_Filled
+, SUM(case when e.flag in (5) and f.rank_category = 'OBC-A' then 1 else 0 end) as 'OBC_A_Filled'
+, SUM(case when e.flag in (5) and f.rank_category = 'OBC-B' then 1 else 0 end) as 'OBC_B_Filled'
 from course_seat_structure a
 left join session_table b on a.Session_id = b.sessionid
 left join course_level c on a.course_level_id = c.course_level_id
 left join course_table d on a.course_id = d.courseid
 left outer join application_table e on a.Session_id = e.session_id and a.course_level_id = e.course_level_id and a.course_id = e.course_id
-left outer join application_rank_status f on e.application_no = f.application_no
+left outer join application_rank_status f on e.application_no = f.application_no and f.admit_flag = 1
 group by b.session_name, c.course_level_name, d.course_name, a.Total_Seat, (a.Total_Seat - a.SC - a.ST - a.OBC_A - a.OBC_B), a.SC, a.ST, a.OBC_A, a.OBC_B";
 
 //echo $query;

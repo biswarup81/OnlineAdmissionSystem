@@ -22,14 +22,14 @@ if($inputFlag == 2){
 } else if($inputFlag == 4){
     
     //update other application with the same to FLAG 7 for cancelled
-    $query1 = "select b.email, b.Gurdian_Mobile_No from application_table b where b.id=$inputId";
+    $query1 = "select a.email, a.mobile from user a,application_table b where a.user_id = b.user_id AND  b.id=$inputId";
     
     $result1 = mysql_query($query1)or die(mysql_error());
     
     while($rows = mysql_fetch_array($result1)){
-        $phone = $rows['Gurdian_Mobile_No'];
+        $phone = $rows['mobile'];
         $email = $rows['email'];
-        $query2 = "UPDATE application_table a SET a.flag='7' where (a.Gurdian_Mobile_No = '". $phone ."' or a.email = '".$email."') and flag=3";
+        $query2 = "UPDATE application_table a, user b SET a.flag='7' where (b.mobile = '". $phone ."' or b.email = '".$email."') and flag=3 and a.user_id=b.user_id";
         
         mysql_query($query2) or die(mysql_error());
     }

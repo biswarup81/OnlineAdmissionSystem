@@ -12,7 +12,7 @@
 	  </TD>
 	</TR>	  
 </TABLE>	  
-<? if(isset($ERmsg) && $ERmsg!=''){
+<?php if(isset($ERmsg) && $ERmsg!=''){
 $msg_table="<table cellpadding=\'0\' cellspacing=\'0\' width=\'100%\' style=\'\'><tr><td align=\'left\' style=\'background-color:#3F5E9F; height:20px; color:#ffffff; padding-left:5px; font-weight:bold;\'>Message Box<td align=\'right\' style=\'background-color:#3F5E9F; height:20px;\'><a href=\'javascript:closeMessage();\' style=\'text-decoration:none\' ><span style=\'color:#ffffff; padding-right:5px;font-weight:bold\'>X</span></a></td></tr><tr><td class=\'message\' align=\'center\' colspan=\'2\' style=\'height:70px\'>".ucfirst($ERmsg)."</td></tr><tr><td class=\'message\' align=\'center\' colspan=\'2\'><input  class=\'form_button\' type=\'button\' id=\'msg_ok\' name=\'msg_ok\' onclick=\'closeMessage();return false\' value=\'Ok\' /></td></tr></table>";
 ?>
 
@@ -34,7 +34,7 @@ function closeMessage()
 	
 }
 </script>
-<? }?>
+<?php }?>
 
 </body>
 </html>

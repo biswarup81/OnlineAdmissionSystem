@@ -4,6 +4,7 @@ include "../classes/config.php";
 include "../classes/conn.php";
 include "../classes/admin_class.php";
 $applicaion_num = $_GET['application_num'];
+$user_id = $_SESSION['user_id'];
 
 ?>
 <html><head>
@@ -102,7 +103,7 @@ td { padding-left:20px; }
 
 		<td width="25%" class="sTD">Name</td>
 
-		<td width="30%" class="sTD"><?php echo $details->First_Name. ' '.$details->Last_Name; ?></td>
+		<td width="30%" class="sTD"><?php echo $details->fname. ' '.$details->lname; ?></td>
                 <td class="sTD">Mobile Number</td>
 
 		<td class="sTD"> <?php echo $details->Gurdian_Mobile_No ; ?></td>
@@ -207,8 +208,9 @@ td { padding-left:20px; }
              
             </tr>
  <?php $appNo=$details->Application_No;
+$user_id =$details->user_id;
  $query2 = "SELECT b.Subject_Name, a.Marks_Obtained, a.Full_Marks, a.Pass_Fail_Remarks, a.Board, a.Roll_Index_No, a.Year_of_Passing"
-                . " FROM applicaion_marks a, subject_master b WHERE a.`Application_No`='$appNo' and a.subject = b.subject_Id";
+                . " FROM academic_details a, subject_master b WHERE a.`User_id`='$user_id' and a.subject = b.subject_Id";
        
          $marksQuery1=mysql_query($query2) or die(mysql_error());
 
@@ -236,13 +238,13 @@ td { padding-left:20px; }
 
     </tr> 
 	
-	<tr><td colspan="4" align="center">PAYMENT DETAILS</td></tr>
+	<tr><td colspan="2" align="center">PAYMENT DETAILS</td><td colspan="2" align='center'><?php echo "Student Reference: ".$details->Application_No;?></td></tr>
 	<tr>
             
 
       <td class="sTD"><label>AC Name : KANDRA RADHAKANTA KUNDU MAHAVIDYALAYA</label></td>
 	  
-	  <td class="sTD"><label>AC Number:<br/>SBI - 11782685061<br/>ICICI - 271001000058</label></td>
+	  <td class="sTD"><label>AC Number:<br/>SBI - 11782685061<br/>Axis - 919010011021249 </label></td>
 	  <td align='left'>Rs. 200/= (Bank Charges Extra)</td>
 	  <td align='left'>Date</td>
 	</tr>

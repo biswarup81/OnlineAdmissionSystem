@@ -1,17 +1,17 @@
 <?php
 include"top.php";
 include"header.php";
-$sort_fieldname = 'id desc';
-$select_field = "a.id,a.Application_No,a.password,a.Application_Fee,
-        a.Demand_Draft_No,a.First_Name,a.Middle_Name,a.Last_Name,a.Gurdian_Name,
-        a.Gurdian_Mobile_No,a.Gurdian_Relation,
-        a.Other_Relation,a.occu,a.other_occu,a.desi,a.income,a.Gender,a.Date_Of_Birth,
-        a.Category,a.Physically_Challenged,a.Religion,a.other_religion,a.Nationality,
-        a.Address,a.ZIP_PIN,a.Address_1,a.pin2,a.Address_2,a.Country,a.Mobile,a.Land_Phone_No,
-        a.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
-        a.course_level_id,a.session_id,a.submit_date,a.flag,a.state,a.district, 
+$sort_fieldname = 'a.id desc';
+$select_field = "a.id,a.Application_No,u.password,a.Application_Fee,a.Admission_Fee,
+        a.Demand_Draft_No,u.fname,u.mname,u.lname,u.mobile,u.user_id,p.Gurdian_Name,
+        p.Gurdian_Mobile_No,p.Gurdian_Relation,
+        p.Other_Relation,p.occu,p.other_occu,p.desi,p.income,u.Gender,p.Date_Of_Birth,
+        p.Category,p.Physically_Challenged,p.Religion,p.other_religion,p.Nationality,
+        p.Address,p.ZIP_PIN,p.Address_1,p.pin2,p.Address_2,p.Country,p.Mobile,p.Land_Phone_No,
+        u.email,a.Total_Marks,a.Bank_Payment_Verified,a.admit,a.course_id,
+        a.course_level_id,a.session_id,a.submit_date,a.flag,p.state,p.district, 
         b.Course_Level_Name, c.Course_Name ";
-$table = "application_table a, course_level b, course_table c, admission_flag d";
+$table = "application_table a, course_level b, course_table c, admission_flag d, personal_details p, user u";
 $admin_pagelist = 10;
 $search_para = "Show All Records";
 $action = $_REQUEST['action'];
@@ -29,6 +29,20 @@ if ($action == "changeFlag") {
 //$inputId = filter_input(INPUT_GET, 'id');
     $query = "UPDATE `application_table` SET `flag`='" . $inputFlag . "' where `id`='" . $inputId . "'";
     mysql_query($query)or die(mysql_error());
+    if($inputFlag == 5)
+    {
+        $query = "UPDATE `application_rank_status` SET `admit_flag`= 1 "
+            . " where application_no =(select application_no from application_table where `id`='" . $inputId . "')"
+                . " and rank_category = (select Category from application_table where `id`='" . $inputId . "')";
+                mysql_query($query)or die(mysql_error());
+                if(mysql_affected_rows()<1)
+                {
+                    $query = "UPDATE `application_rank_status` SET `admit_flag`= 1 " .
+                        " where application_no =(select application_no from application_table where `id`='" . $inputId . "')" .
+                        " AND rank_category = 'GEN'";
+                    mysql_query($query)or die(mysql_error());
+                }
+    }
     //q("DELETE FROM dt_epin_request WHERE id='$id'");
     header("location:" . $_SERVER['PHP_SELF']);
     exit();
@@ -43,22 +57,22 @@ if ($action == 'search') {
 
     if (isset($_POST['start_dt']) && $_POST['start_dt'] <> "") {
         $start_dt = $_POST['start_dt'];
-        $where_field.=" AND submit_date>='" . date("Y-m-d", strtotime(($_POST['start_dt']))) . "'";
+        $where_field.=" AND a.submit_date>='" . date("Y-m-d", strtotime(($_POST['start_dt']))) . "'";
     }
     if (isset($_POST['to_dt']) && $_POST['to_dt']) {
         $to_dt = $_POST['to_dt'];
-        $where_field.=" AND submit_date<='" . date("Y-m-d", strtotime(($_POST['to_dt']))) . "'";
+        $where_field.=" AND a.submit_date<='" . date("Y-m-d", strtotime(($_POST['to_dt']))) . "'";
     }
 
     if (isset($_POST['appNo']) && $_POST['appNo']) {
         //echo "fg";
         $appNo = $_POST['appNo'];
-        $where_field.=" AND Application_No like '%" . $_POST['appNo'] . "%'";
+        $where_field.=" AND a.Application_No like '%" . $_POST['appNo'] . "%'";
     }
 }
 /* Make Where Clause */
 
-$where_field = " where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId
+$where_field = " where a.course_level_id = b.Course_Level_Id and a.course_id = c.courseId AND p.user_id=a.user_id AND u.user_id=a.user_id
         and d.FLAG_ID=a.flag and  a.flag='4' " . $where_field;
 ?>
 <script>
@@ -167,9 +181,9 @@ $where_field = " where a.course_level_id = b.Course_Level_Id and a.course_id = c
                 }	
                 $from = ($page_num - 1) * $show_rec_per_page;
                 $search_query = "SELECT $select_field FROM $table ".$where_field." limit $from, $show_rec_per_page";
-                echo $search_query;
+              //  echo $search_query;
                 }	
-                //echo $search_query;
+               // echo $search_query;
                 $tot_rec=(int)nr(q($search_query));
                 if($tot_rec<>0)
                 {
@@ -204,12 +218,13 @@ $where_field = " where a.course_level_id = b.Course_Level_Id and a.course_id = c
                 <tr bgcolor="#ffffff" onMouseOver=bgColor = "#EFF7FF" onMouseOut=bgColor = "#ffffff">
                     <td style="padding-left:5px;"><? echo $slno;?></td>
 
-                    <td style="padding-left:5px;"><?php echo stripslashes($f_arr['First_Name']) . " " . stripslashes($f_arr['Last_Name']); ?></td>
-                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['Gurdian_Mobile_No']);?></td>
+                    <td style="padding-left:5px;"><?php echo stripslashes($f_arr['fname']) . " " . stripslashes($f_arr['lname']); ?></td>
+                    <td style="padding-left:5px;"><? echo stripslashes($f_arr['mobile']);?></td>
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['Course_Level_Name']);?></td>
                     <td style="padding-left:5px;"><?php
 $appNoTest = $f_arr['Application_No'];
-$fetch_app_no = mysql_fetch_array(mysql_query("select * from applicaion_marks where Application_No='" . $appNoTest . "' limit 1"));
+$user_id =$f_arr['user_id'];
+$fetch_app_no = mysql_fetch_array(mysql_query("select * from academic_details  where User_id='" . $user_id . "' limit 1"));
 echo stripslashes($fetch_app_no['Roll_Index_No']);
 ?></td>
                     <td style="padding-left:5px;"><? echo stripslashes($f_arr['Course_Name']);?></td>
@@ -229,8 +244,11 @@ if ($f_arr['flag'] == 1) {
 
 
                         <?php } else if ($f_arr['flag'] == 4) { ?>
-
+                                       <?php if($f_arr['Admission_Fee'] == ""){?>
+                                        	ACCEPTED || Admission Fee Due
+                                    <?php }else{?>
                             <a href="<?php echo $_SERVER['PHP_SELF'] ?>?action=changeFlag&id=<?php echo $f_arr['id']; ?>&flag=5" onclick="return confirm('Want to Admit?');">CONFIRM ADMISSION</a>
+                  <?php } ?>
                         <?php }else if ($f_arr['flag'] == 8) { ?>
                                 DELETED
                         <?php } else if ($f_arr['flag'] == 9) { ?>

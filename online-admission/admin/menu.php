@@ -23,7 +23,7 @@
                         <a href="student_list.php">All Students List</a><br/><br/>
                         <a href="confirmed_student_List.php">Confirmed Students List</a><br/><br/>
                         <a href="admission_accepted_by_student.php">Accepted Student List</a><br/><br/>
-                        <a href="RankedStudents.php">Ranked Students Dashboard</a><br/><br/>
+                        <a href="RankedStudents.php">Ranked Students List</a><br/><br/>
                         <a href="admitted_student_dashboard.php">Admitted Students Dashboard</a><br/><br/>
                         
                         <a href="admittedStudent.php">Admitted Student List</a><br/>&nbsp;
