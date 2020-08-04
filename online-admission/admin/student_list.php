@@ -69,6 +69,7 @@ $where_field = " WHERE 1" . $where_field;
 <script src="../../jquery-ui-1.11.3/external/jquery/jquery.js"></script>
 <script>
     function changeFlag(inputFlag, id){
+        //Changed here
         //alert('Change flag clicked');
 		//alert("row_"+id);
 		$("#row_"+id).html('Admitting...Wait..');

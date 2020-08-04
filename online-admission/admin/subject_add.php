@@ -47,6 +47,7 @@ if($action=='Submit'){
 	
 ?>
 
+
 <table cellpadding="0" cellspacing="0" width="70%" align="left" border="0" >	
 	<tr>
 		<td>
