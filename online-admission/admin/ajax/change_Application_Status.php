@@ -37,9 +37,11 @@ if($inputFlag == 2){
     $course_id = $rows->course_id;
     $course_level_id = $rows->course_level_id;
     $category = $rows->Category;
-    //update application_table a set FLAG = 7 where (a.email = 'biswarup.ghoshal@gmail.com' or a.Gurdian_Mobile_No = '9874404111') and a.id != '3' 
-    
-    $admin->cancelOtherApplication($email,$mobile_number,$inputId);
+    $user_id=$rows->user_id;
+    //update application_table a set FLAG = 7 where (a.email = 'biswarup.ghoshal@gmail.com' or a.Gurdian_Mobile_No = '9874404111') and a.id != '3'
+  //echo $email.".$user_id.".$inputId;
+    $admin->cancelOtherApplication($user_id,$inputId);
+
     
 
     //Update course_seat_structure table

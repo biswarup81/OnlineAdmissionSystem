@@ -706,14 +706,12 @@ class admin_class {
         mysql_query($query_add_in_course_structure) or die(mysql_error());
    }
    
-   function cancelOtherApplication($email,$mobile_number,$inputId){
-       $query = "update application_table a set FLAG = 12 where "
-            . "(a.email = '$email' or "
-            . "a.Gurdian_Mobile_No = '$mobile_number') and "
-            . "a.id != '$inputId' and flag in (3,4,5)";
-       mysql_query($query) or die(mysql_error());
-       
-   }
+   function cancelOtherApplication($user_id,$inputId){
+    $query = "update application_table a set FLAG = 12 where 
+              a.user_id ='$user_id' and a.id != '$inputId' and flag in (3,4,5)";
+    mysql_query($query) or die(mysql_error());
+    
+}
    function auditTrailSMS($message, $mobile_num){
    	
 	   	$insert_query = "insert into sms_sent_info (MESSAGE, MOBILE) values ('".$message."','".$mobile_num."')";
