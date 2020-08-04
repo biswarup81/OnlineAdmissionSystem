@@ -1,4 +1,4 @@
-	<?php
+<?php
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -791,7 +791,7 @@ class admin_class {
            
            $message = "You have completed your admission for ".$courlevel."-".$coursename.". Wecome to ".$college_name;
        } 
-       //echo $message;
+       echo $message;
        
        
        $admin->sendSMS($message, $mobile_num);
